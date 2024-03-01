@@ -16,7 +16,7 @@ async function verify_customer (req: Request, res: Response, next: NextFunction)
       let [row] = await conn.query<RowDataPacket[]>(qr, [service_id, user.user_id]);
       if(row.length <= 0)
       {
-         status: http_status_code.unauthorized;
+         status= http_status_code.unauthorized;
          throw new Error("you are unauthorized");
       }
 
