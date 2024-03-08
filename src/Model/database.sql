@@ -19,8 +19,6 @@
 );*/
 
 
-
-
 CREATE TABLE Category (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(255),
@@ -50,7 +48,7 @@ CREATE TABLE User (
     password VARCHAR(255) NOT NULL,
     category_id INT,
     cv TEXT,
-    adress VARCHAR(100),
+    address VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     verifier BOOLEAN DEFAULT false,
     phone_number VARCHAR(20),
@@ -132,7 +130,7 @@ CREATE TABLE Notification (
     FOREIGN KEY (receive_user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE Appointement (
+CREATE TABLE Appointment (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT,
     status ENUM('pending', 'confirmed', 'processing', 'cancelled') DEFAULT 'pending',

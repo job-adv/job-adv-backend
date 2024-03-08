@@ -67,8 +67,8 @@ export default class AuthController {
              let access_token_secret: string = process.env.ACCESS_TOKEN_KEY as string;
              let refresh_token_secret: string = process.env.REFRECH_TOKEN_KEY as string;
              
-             const access_token = jwt.sign(user, access_token_secret, { expiresIn: "1min" });
-             const refrech_token = jwt.sign(user, refresh_token_secret, { expiresIn: "1h" });
+             const access_token = jwt.sign(user, access_token_secret, { expiresIn: "60000" });
+             const refrech_token = jwt.sign(user, refresh_token_secret, { expiresIn: "30d" });
 
              res.cookie("jwt", refrech_token, {
               httpOnly: true,

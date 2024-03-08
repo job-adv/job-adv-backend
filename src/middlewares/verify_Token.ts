@@ -15,7 +15,6 @@ export default async function verifyToken(req: Request, res: Response, next: Nex
         const token: string = authHeader.split(" ")[1];
         jwt.verify(token, process.env.ACCESS_TOKEN_KEY as string, async (err: jwt.VerifyErrors | null, decoded: any) => {
             if (err) {
-              console.log(!req.cookies || !req.cookies.jwt)
                 if (!req.cookies || !req.cookies.jwt) {
                     return res.status(401).json({ success: false, msg: "Unauthorized" });
                 }
@@ -24,7 +23,6 @@ export default async function verifyToken(req: Request, res: Response, next: Nex
 
                 jwt.verify(refreshToken, process.env.REFRECH_TOKEN_KEY as string, async (err: any, decoded: any) => {
                     if (err) {
-                      console.log(err);
                         return res.status(401).json({ success: false, msg: "Unauthorized" });
                     }
 

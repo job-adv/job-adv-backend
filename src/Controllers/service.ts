@@ -20,7 +20,7 @@ export default class ServiceController {
 
 
         const result: any = {};
-       rows.forEach((row: any) => {
+        rows.forEach((row: any) => {
            if (!result[row.service_id]) {
                result[row.service_id] = {
                    service_id: row.service_id,
@@ -221,7 +221,10 @@ export default class ServiceController {
 
      try{
         let conn =  await connect();
-        let qr: string = "INSERT INTO Service(`title`, `description`, `user_id`, `subCategory_id`) VALUES(?, ?, ?, ?)";
+        let qr: string= "select * from Service where user_id= ?";
+        let [verify] = await conn.query<RowDataPacket[]>(qr, [user.user_id]);
+        if(verify.length >= 1) return res.status(http_status_code.bad_request).json({success: false, msg: "you have already one service in this subCategory"});
+        qr = "INSERT INTO Service(`title`, `description`, `user_id`, `subCategory_id`) VALUES(?, ?, ?, ?)";
         let [created] = await conn.query<ResultSetHeader>(qr, [title, description, user.user_id, subCategory_id]);
 
         if(created.affectedRows == 0)

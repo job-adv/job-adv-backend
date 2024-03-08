@@ -64,15 +64,16 @@ export default class favoriteController {
      success: false,
      msg: e instanceof Error? e.message : e
    });
+  }
  }
-}
 
 
 
   static async ViewAllFavorite(req: Request, res: Response)
   {
       let status:number = http_status_code.serverError;
-      let user = (req as any).user_id;
+      let user = (req as any).user;
+      console.log(user.user_id);
       try{
           let conn = await connect();
           let qr: string = "select * from Favorite where user_id= ?";

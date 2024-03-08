@@ -10,12 +10,12 @@ export default class AppointmentController {
   static async create(req: Request, res: Response)
   {
      let status = http_status_code.serverError;
-     let { description , servidce_id, p_id } = req.body as { description: string , servidce_id: number, p_id: number };
+     let { description , service_id, p_id } = req.body as { description: string , service_id: number, p_id: number };
 
      try{
          let conn = await connect();
          let qr: string = "INSERT INTO Appointment(`description`, `service_id`, `p_id`) VALUES (?, ?, ?)";
-         let [created] = await conn.query<ResultSetHeader>(qr, [description, servidce_id, p_id]);
+         let [created] = await conn.query<ResultSetHeader>(qr, [description, service_id, p_id]);
          if(created.affectedRows == 0)
          {
            status= http_status_code.bad_request;

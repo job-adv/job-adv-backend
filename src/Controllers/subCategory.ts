@@ -12,7 +12,7 @@ export default class SubCategoryController {
     let status: number = http_status_code.serverError;
     try{
        let conn = await connect();
-       let qr: string = "select subCategory_name,  category_id, subCategory_picture, subCategorie_id, category_name, category_picture from Category, SubCategory where Category.category_id=SubCategory.category_id";
+       let qr: string = "select SubCategory.subCategory_name, SubCategory.category_id, SubCategory.subCategory_picture, SubCategory.subCategory_id, Category.category_name, Category.category_picture from Category, SubCategory where Category.category_id= SubCategory.category_id";
        let [rows] = await conn.query<RowDataPacket[]>(qr);
        return res.status(http_status_code.ok).json({
          success: true,
@@ -134,7 +134,7 @@ export default class SubCategoryController {
         }
 
 
-        qr = "update SubCategorie set subCategory_name=?, subCategory_picture=? where subCategory_id= ?";
+        qr = "update SubCategory set subCategory_name=?, subCategory_picture=? where subCategory_id= ?";
         let [updating] = await conn.query<ResultSetHeader>(qr, [subCategorie.subCategory_name, subCategorie.subCategory_picture, subCategory_id]);
         if(updating.affectedRows == 0){
            status = http_status_code.bad_request;
