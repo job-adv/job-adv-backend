@@ -21,6 +21,7 @@ import * as dotenv from 'dotenv';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDoc from './swagger.json';
+import cors from 'cors';
 
 
 dotenv.config();
@@ -28,6 +29,14 @@ dotenv.config();
 
 const app: express.Application = express();
 const Port = process.env.PORT || 3000;
+
+app.use(cors({
+  origin: '*',
+  methods: '*',
+  allowedHeaders: '*',
+  credentials: true
+}));
+
 app.use(cookieParser());
 app.use(express.json({ limit: "20kb"}));
 app.use(express.urlencoded({ extended: true }));
