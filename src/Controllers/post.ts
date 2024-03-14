@@ -71,7 +71,8 @@ export default class special_Request {
    static async updatePost(req: Request, res:Response)
    {
       let status: number = http_status_code.serverError;
-      let { post_id, description, title, _status } = req.body as { description: string, title: string, _status: string, post_id: number};
+      let { description, title, _status } = req.body as { description: string, title: string, _status: string};
+      let post_id = req.params;
   
       try{
          let conn= await connect();
@@ -117,7 +118,7 @@ export default class special_Request {
    static async deletePost(req: Request, res:Response)
    {
       let status: number = http_status_code.serverError;
-      let { post_id } = req.body as { post_id: string};
+      let { post_id } = req.params
       try{
          let conn= await connect();
          let qr: string = "delete from Post where post_id= ?";

@@ -35,7 +35,7 @@ export default class Suggestion {
   static async deleteSuggestion(req: Request, res: Response)
   {
        let status: number = http_status_code.serverError;
-       let {suggestionID} = req.body as {suggestionID: number};
+       let {suggestionID} = req.params;
        try{
           let conn = await connect();
           let qr: string = "delete from Suggestion where suggestionID= ?";

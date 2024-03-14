@@ -9,7 +9,7 @@ const router = Router();
 
 router.route('/view').get([verify], favorite.ViewAllFavorite);
 router.route('/add').post([verify], favorite.addFavorite);
-router.route("/delete").delete([verify], favorite.deleteFavorite);
+router.route("/delete/:favorite_id").delete([verify], favorite.deleteFavorite);
 
 
 

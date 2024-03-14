@@ -34,7 +34,7 @@ export default class ReportController {
  static async deleteReport(req: Request, res: Response)
  {
       let status: number = http_status_code.serverError;
-      let {reportID} = req.body as {reportID: number};
+      let {reportID} = req.params;
       try{
          let conn = await connect();
          let qr: string = "delete from Report where reportID= ?";

@@ -6,7 +6,7 @@ const router = Router();
 
 router.route('/viewCustomer').get([verify], appointment.ViewCustomAppointment);
 router.route('/viewProfessional').get([verify], appointment.ViewProfessionalAppointment);
-router.route("/update").patch([verify], appointment.update)
+router.route("/update/:appointment_id").patch([verify], appointment.update)
 router.route('/create').post([verify], appointment.create);
 
 

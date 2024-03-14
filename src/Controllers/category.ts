@@ -70,7 +70,8 @@ export default class CategoryController {
 
   static async updateCategory(req: Request, res: Response)
   {
-      let { category_id, category_name, category_picture } = req.body as { category_id: number, category_name: string , category_picture: string}
+      let { category_name, category_picture } = req.body as { category_name: string , category_picture: string}
+      let {category_id} = req.params;
       let status: number = http_status_code.serverError;
 
       try{
@@ -119,7 +120,7 @@ export default class CategoryController {
 
 
   static async deleteCategory(req: Request, res: Response) {
-    let { category_id } = req.body as { category_id: number };
+    let { category_id } = req.params;
     let status: number = http_status_code.serverError;
 
     try {

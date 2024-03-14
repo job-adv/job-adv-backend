@@ -9,8 +9,8 @@ const router = Router();
 
 router.route('/view').get(subCategory.viewAll);
 router.route('/add').post(subCategory.addsubCategory);
-router.route("/update").patch(subCategory.UpdateSubCategory);
-router.route('/delete').get(subCategory.deleteSubCategory);
+router.route("/update/:subCategory_id").patch(subCategory.UpdateSubCategory);
+router.route('/delete/:subCategory_id').get(subCategory.deleteSubCategory);
 
 
 

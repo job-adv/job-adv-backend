@@ -121,7 +121,7 @@ export default class UsereController {
   static async deleteUser(req: Request, res: Response)
   {
     let status: number = http_status_code.serverError;
-    let { user_id } = req.body as { user_id: string};
+    let { user_id } = req.params;
 
     try{
        let conn = await connect();

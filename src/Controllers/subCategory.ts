@@ -71,7 +71,8 @@ export default class SubCategoryController {
  static async deleteSubCategory(req: Request, res: Response)
  {
      let status: number = http_status_code.serverError;
-     let { category_id, subCategory_id } = req.body as { category_id: number, subCategory_id: number };
+     let { category_id} = req.body as { category_id: number};
+     let subCategory_id = req.params;
      try{
          let conn = await connect();
          let qr: string = "select * from SubCategory where subCategory_id= ? and category_id= ?";
@@ -112,8 +113,8 @@ export default class SubCategoryController {
  static async UpdateSubCategory(req: Request, res: Response)
  {
      let status: number = http_status_code.ok;
-     let { subCategory_id, subCategory_name, subCategory_picture, category_id } = req.body as { subCategory_name: string , subCategory_picture: string , subCategory_id: number, category_id: number}
-     
+     let { subCategory_name, subCategory_picture, category_id } = req.body as { subCategory_name: string , subCategory_picture: string , subCategory_id: number, category_id: number}
+     let subCategory_id = req.params;
      try{
         let conn = await connect();
         let qr: string = "select * from subCategory where category_id= ?";

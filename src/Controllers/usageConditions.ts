@@ -38,7 +38,7 @@ export default class UsageCondition {
  static async deleteUsageConditions(req: Request, res: Response)
   {
       let status: number = http_status_code.serverError;
-      let { documentID } = req.body as { documentID: string};
+      let { documentID } = req.params;
 
       try{
          let conn = await connect();
@@ -60,6 +60,29 @@ export default class UsageCondition {
           msg: e instanceof Error? e.message : e
         });
       }
+ }
+
+
+ static async viewAll(req: Request, res: Response)
+ {
+    let status: number = http_status_code.serverError;
+    try{
+       let conn =  await connect();
+       let qr= "select * from UsageConditions";
+       let [rows] = await conn.query<RowDataPacket[]>(qr);
+
+       return res.status(http_status_code.ok).json({
+          success: true,
+          resultCount: rows.length,
+          data: rows
+       })
+   }
+    catch(e){
+     return res.status(status).json({
+       success: false,
+       msg: e instanceof Error? e.message : e
+     });
+   }
  }
 
 }

@@ -41,7 +41,7 @@ export default class favoriteController {
   static async deleteFavorite(req: Request, res: Response)
   {
     let status: number = http_status_code.serverError;
-    let { favorite_id } = req.body as { favorite_id: number};
+    let { favorite_id } = req.params;
     let user = (req as any).user;
 
     try{

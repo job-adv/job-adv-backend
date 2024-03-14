@@ -8,7 +8,7 @@ const router = Router();
 
 router.route('/view').get([verify], picture.View);
 router.route('/add').post([verify], picture.addPicture);
-router.route("/delete").patch([verify], picture.deletePicture);
+router.route("/delete/:picture_id").patch([verify], picture.deletePicture);
 
 
 

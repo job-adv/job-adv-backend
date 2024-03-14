@@ -42,7 +42,7 @@ export default class CategoryController {
   static async deletePicture(req: Request, res: Response)
   {
       let status = http_status_code.serverError;
-      let { picture_id } = req.body as { picture_id: string };
+      let { picture_id } = req.params;
       try{
           let conn = await connect();
           let qr: string = "delete from Picture where picture_id= ?";

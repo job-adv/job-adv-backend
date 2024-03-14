@@ -165,7 +165,7 @@ CREATE TABLE Price (
     price_id INT AUTO_INCREMENT PRIMARY KEY,
     value DECIMAL(10, 2),
     description TEXT,
-    rate DECIMAL(5, 2),
+    rate VARCHAR(20),
     service_id INT,
     FOREIGN KEY (service_id) REFERENCES Service(service_id) ON DELETE CASCADE
 );

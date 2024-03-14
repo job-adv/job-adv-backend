@@ -41,7 +41,8 @@ export default class AppointmentController {
   static async update(req: Request, res: Response)
   {
      let status: number = http_status_code.serverError;
-     let { appointment_id, _status, date, time } = req.body as { appointment_id: number, _status: string, date: any, time: any };
+     let { _status, date, time } = req.body as { _status: string, date: any, time: any };
+     let appointment_id = req.params;
      try{
        let conn = await connect();
        let qr: string = "select * from Appointment where appointment_id= ?";

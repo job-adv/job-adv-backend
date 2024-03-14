@@ -8,8 +8,8 @@ const router = Router();
 
 router.route('/view').get(review.ViewAll);
 router.route('/add').post(review.addReview);
-router.route("/update").patch(review.UpdateReview);
-router.route("/delete").patch(review.deleteReview);
+router.route("/update/:review_id").patch(review.UpdateReview);
+router.route("/delete/:review_id").patch(review.deleteReview);
 
 
 

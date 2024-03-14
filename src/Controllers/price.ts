@@ -43,7 +43,8 @@ export default  class PriceContoller {
    static async updatePrice(req: Request, res:Response)
    {
       let status: number = http_status_code.serverError;
-      let { value, description, rate, price_id} = req.body as { value: number , description: string, rate: string, price_id: number};
+      let { value, description, rate} = req.body as { value: number , description: string, rate: string};
+      let price_id = req.params;
   
       try{
          let conn= await connect();
@@ -87,7 +88,7 @@ export default  class PriceContoller {
    static async deletePrice(req: Request, res:Response)
    {
       let status: number = http_status_code.serverError;
-      let { price_id } = req.body as { price_id: string};
+      let { price_id } = req.params;
       try{
          let conn= await connect();
          let qr: string = "delete from Price where price_id= ?";

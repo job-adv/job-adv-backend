@@ -7,7 +7,7 @@ const router = Router();
 
 router.route('/view').get(suggestion.ViewSuggestions);
 router.route('/add').post(suggestion.createSuggestion);
-router.route("/delete").patch(suggestion.deleteSuggestion);
+router.route("/delete/:suggestionID").patch(suggestion.deleteSuggestion);
 
 
 

@@ -36,7 +36,7 @@ export default class NotificationController{
    static async delete(req: Request, res: Response)
    {
       let status:number = http_status_code.serverError;
-      let { notification_id } = req.body as { notification_id: number}
+      let { notification_id } = req.params;
       let user = (req as any).user;
       try{
           let conn = await connect();

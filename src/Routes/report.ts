@@ -6,7 +6,7 @@ const router = Router();
 
 
 router.route('/view').get(report.ViewReports);
-router.route('/delete').delete(report.deleteReport);
+router.route('/delete/:reportID').delete(report.deleteReport);
 router.route("/create").post([verify], report.createReport);
 
 

@@ -9,8 +9,8 @@ const router = Router();
 router.route('/viewAllprofessional').get(user.allProfessional);
 router.route('/viewAll').post(user.allUser);
 router.route("/update").patch(user.updateUser);
-router.route("/delete").delete(user.deleteUser);
-router.route("/accept").patch(admin.accept_professional);
+router.route("/delete/:user_id").delete(user.deleteUser);
+router.route("/accept/:user_id").patch(admin.accept_professional);
 
 
 

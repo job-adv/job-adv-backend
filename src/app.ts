@@ -16,8 +16,13 @@ import service from "./Routes/service";
 import subCategory from "./Routes/subCategory";
 import suggestion from "./Routes/suggestion";
 import user from "./Routes/user";
-import userCondition from "./Routes/userCondition";
+import userCondition from "./Routes/usageCondition";
 import * as dotenv from 'dotenv';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDoc from './swagger.json';
+
+
 dotenv.config();
 
 
@@ -45,10 +50,12 @@ app.use("/suggestion", suggestion);
 app.use("/user", user);
 app.use("/userCondition", userCondition);
 
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 app.use("*", (req: Request, res: Response) => {
   res.status(404).json("this page not found");
 });
+
 
 app.listen( Port, () => {
   console.log("server is listning now");

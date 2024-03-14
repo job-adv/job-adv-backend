@@ -40,7 +40,7 @@ export default class ReviewController {
   static async deleteReview(req: Request, res: Response)
   {
      let status: number = http_status_code.serverError;
-     let { review_id } = req.body as { review_id: number};
+     let { review_id } = req.params;
      try{
         let conn = await connect();
         let qr: string = "delete from Review where review_id= ?";
@@ -69,7 +69,8 @@ export default class ReviewController {
   static async UpdateReview(req: Request, res: Response)
   {
      let status: number = http_status_code.serverError;
-     let { review_id, comment , rating } = req.body as {review_id: number, comment: string , rating: number , service_id: number };
+     let { comment , rating } = req.body as { comment: string , rating: number , service_id: number };
+     let review_id = req.params;
      try{
         let conn = await connect();
         let qr: string = "select * from Review where review_id= ?";
