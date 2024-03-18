@@ -62,7 +62,7 @@ export default class UsereController {
 
   static async updateUser(req: Request, res: Response)
     {
-        let {firstname, lastname, adress, phone_number, instagram_link, tiktok_link, facebook_link, profile_picture} = req.body as {
+        let {firstname, lastname, adress, phone_number, instagram_link, tiktok_link, facebook_link, profile_picture, disponible} = req.body as {
             
           firstname: String,
           lastname: string,
@@ -72,7 +72,8 @@ export default class UsereController {
           instagram_link: string,
           tiktok_link: string,
           facebook_link: string,
-          profile_picture: string
+          profile_picture: string,
+          disponible: boolean
         };
 
         let status: number = http_status_code.serverError;
@@ -92,11 +93,12 @@ export default class UsereController {
               instagram_link: instagram_link || row[0].instagram_link,
               tiktok_link: tiktok_link || row[0].tiktok_link,
               facebook_link: facebook_link || row[0].facebook_link,
-              profile_picture: profile_picture || row[0].profile_picture
+              profile_picture: profile_picture || row[0].profile_picture,
+              disponible : disponible || row[0].disponible
            }
 
-           qr = "UPDATE User set firstname= ?, lastname=?, adress=?, phone_number=?, instagram_link=?, tiktok_link=?, facebook_link=?, profile_picture=? where user_id= ?";
-           let [updating] = await conn.query<ResultSetHeader>(qr, [profile.firstname, profile.lastname, profile.adress, profile.phone_number, profile.instagram_link, profile.tiktok_link, profile.facebook_link, profile.profile_picture, user.user_id]);
+           qr = "UPDATE User set firstname= ?, lastname=?, adress=?, phone_number=?, instagram_link=?, tiktok_link=?, facebook_link=?, profile_picture=?, disponible= ? where user_id= ?";
+           let [updating] = await conn.query<ResultSetHeader>(qr, [profile.firstname, profile.lastname, profile.adress, profile.phone_number, profile.instagram_link, profile.tiktok_link, profile.facebook_link, profile.profile_picture, disponible, user.user_id]);
            if(updating.affectedRows == 0)
            {
               status = http_status_code.bad_request;

@@ -12,6 +12,8 @@ import post from "./Routes/post";
 import price from "./Routes/price";
 import report from "./Routes/report";
 import review from "./Routes/review";
+import message from "./Routes/message";
+import conversation from "./Routes/conversation";
 import service from "./Routes/service";
 import subCategory from "./Routes/subCategory";
 import suggestion from "./Routes/suggestion";
@@ -22,12 +24,13 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDoc from './swagger.json';
 import cors from 'cors';
+import { server, app} from './socket/socket';
 
 
 dotenv.config();
 
 
-const app: express.Application = express();
+
 const Port = process.env.PORT || 3000;
 
 app.use(cors({
@@ -58,6 +61,8 @@ app.use("/subCategory", subCategory);
 app.use("/suggestion", suggestion);
 app.use("/user", user);
 app.use("/userCondition", userCondition);
+app.use("/conversation", conversation);
+app.use("/message", message);
 
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
@@ -66,6 +71,6 @@ app.use("*", (req: Request, res: Response) => {
 });
 
 
-app.listen( Port, () => {
+server.listen( Port, () => {
   console.log("server is listning now");
 });
