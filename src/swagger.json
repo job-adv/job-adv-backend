@@ -192,7 +192,8 @@
                         "properties": {
                           "category_id": { "type": "string" },
                           "category_name": { "type": "string" },
-                          "category_picture": { "type": "string" }
+                          "category_picture": { "type": "string" },
+                          "category_icon": { "type": "string" }
                         }
                       }
                     }
@@ -230,7 +231,8 @@
                 "type": "object",
                 "properties": {
                   "category_name": { "type": "string" },
-                  "category_picture": { "type": "string" }
+                  "category_picture": { "type": "string" },
+                  "category_icon": { "type": "string" }
                 },
                 "required": ["category_name", "category_picture"]
               }
@@ -306,7 +308,8 @@
                 "type": "object",
                 "properties": {
                   "category_name": { "type": "string" },
-                  "category_picture": { "type": "string" }
+                  "category_picture": { "type": "string" },
+                  "category_icon": {"type": "string"}
                 }
               }
             }
