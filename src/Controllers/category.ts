@@ -36,7 +36,7 @@ export default class CategoryController {
 
   static async addCategory(req: Request, res: Response)
   {
-     let { category_name, category_picture } = req.body as { category_name: string, category_picture: string};
+     let { category_name, category_picture, category_icon } = req.body as { category_name: string, category_picture: string, category_icon: string};
      let status: number = http_status_code.serverError;
      try{
          let conn = await connect();
@@ -47,8 +47,8 @@ export default class CategoryController {
            throw new Error("category already exist"); 
          }
 
-         qr = "INSERT INTO Category (`category_name`, `category_picture`) VALUES (?, ?)";
-         let [add] = await conn.query<ResultSetHeader>(qr, [category_name, category_picture]);
+         qr = "INSERT INTO Category (`category_name`, `category_picture`, `category_icon`) VALUES (?, ?, ?)";
+         let [add] = await conn.query<ResultSetHeader>(qr, [category_name, category_picture, category_icon]);
          if(add.affectedRows == 0){
           status = http_status_code.bad_request;
           throw new Error("gategory does not added"); 
@@ -70,7 +70,7 @@ export default class CategoryController {
 
   static async updateCategory(req: Request, res: Response)
   {
-      let { category_name, category_picture } = req.body as { category_name: string , category_picture: string}
+      let { category_name, category_picture, category_icon } = req.body as { category_name: string , category_picture: string, category_icon: string}
       let {category_id} = req.params;
       let status: number = http_status_code.serverError;
 
@@ -92,11 +92,12 @@ export default class CategoryController {
           let [row] = await conn.query<RowDataPacket[]>(qr, [category_id]);
           let category = {
               category_name : category_name || row[0].category_name,
-              category_picture : category_picture || row[0].category_picture
+              category_picture : category_picture || row[0].category_picture,
+              category_icon: category_icon || row[0].category_icon
           };
 
-          qr = "update Category set category_name= ?, category_picture= ? where category_id= ?";
-          let [updating] = await conn.query<ResultSetHeader>(qr, [category.category_name, category.category_picture, category_id]);
+          qr = "update Category set category_name= ?, category_picture= ?, category_icon= ? where category_id= ?";
+          let [updating] = await conn.query<ResultSetHeader>(qr, [category.category_name, category.category_picture, category_icon, category_id]);
           if(updating.affectedRows == 0)
           {
             status = http_status_code.bad_request;

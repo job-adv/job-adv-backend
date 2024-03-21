@@ -1,7 +1,3 @@
 .env
 .node_modules
 node_modules
-/src/swagger.json
-swagger.json
-swagger
-./src/swagger.json

@@ -80,7 +80,7 @@ export default class ServiceController {
             msg: e instanceof Error ? e.message : "An error occurred"
         });
     }
-}
+ }
 
 
   static async viewAllmyService(req: Request, res: Response)

@@ -72,7 +72,7 @@ export default class SubCategoryController {
  {
      let status: number = http_status_code.serverError;
      let { category_id} = req.body as { category_id: number};
-     let subCategory_id = req.params;
+     let {subCategory_id} = req.params;
      try{
          let conn = await connect();
          let qr: string = "select * from SubCategory where subCategory_id= ? and category_id= ?";

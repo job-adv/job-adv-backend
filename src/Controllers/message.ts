@@ -49,7 +49,7 @@ export default class MessageController {
            row[0]= search[0];
         }
 
-       let [send] = await conn.query<ResultSetHeader>("INSERT INTO Message(content, conversation_id)  VALUES (?, ?)", [content, row[0].conversation_id]);
+       let [send] = await conn.query<ResultSetHeader>("INSERT INTO Message(content, sender_id , receiver_id ,conversation_id)  VALUES (?, ?, ?, ?)", [content, user.user_id, recipient_id,row[0].conversation_id]);
        const recipientSocketId = getRecipientSocketId(recipient_id);
        let newMessage = {
          sender_id : user.user_id,

@@ -18,7 +18,7 @@ export default class AuthController {
 //---------------------------------------------------------------------Signin---------------------------------------------------------------------
 
 
-    static async signin(req: Request, res: Response) 
+    static async signup(req: Request, res: Response) 
     {
          let status: number = http_status_code.serverError;
          let { username, firstname, lastname, role,  email, password, adress } = req.body as Userwithoutuser_id;

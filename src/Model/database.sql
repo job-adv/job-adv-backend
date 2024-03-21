@@ -171,15 +171,14 @@ CREATE TABLE Price (
 );*/
 
 
-
-CREATE TABLE Category (
+CREATE TABLE IF NOT EXISTS Category (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(255),
-    category_picture VARCHAR(255)
+    category_picture VARCHAR(255),
+    category_icon VARCHAR(255)
 );
 
-
-CREATE TABLE SubCategory (
+CREATE TABLE IF NOT EXISTS SubCategory (
     subCategory_id INT AUTO_INCREMENT PRIMARY KEY,
     subCategory_name VARCHAR(255),
     subCategory_picture VARCHAR(255),
@@ -187,14 +186,12 @@ CREATE TABLE SubCategory (
     FOREIGN KEY (category_id) REFERENCES Category(category_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE UsageConditions (
+CREATE TABLE IF NOT EXISTS UsageConditions (
     documentID INT AUTO_INCREMENT PRIMARY KEY,
     content TEXT
 );
 
-
-CREATE TABLE User (
+CREATE TABLE IF NOT EXISTS User (
     user_id VARCHAR(36) PRIMARY KEY,
     role ENUM('admin', 'professional', 'customer') NOT NULL,
     username VARCHAR(255) NOT NULL UNIQUE,
@@ -204,7 +201,7 @@ CREATE TABLE User (
     password VARCHAR(255) NOT NULL,
     category_id INT,
     cv TEXT,
-    address VARCHAR(100),
+    adress VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     verifier BOOLEAN DEFAULT false,
     phone_number VARCHAR(20),
@@ -215,8 +212,16 @@ CREATE TABLE User (
     disponible BOOLEAN DEFAULT true 
 );
 
+CREATE TABLE IF NOT EXISTS Conversation (
+    conversation_id INT AUTO_INCREMENT PRIMARY KEY,
+    user1_id VARCHAR(36),
+    user2_id VARCHAR(36),
+    seen BOOLEAN DEFAULT false,
+    FOREIGN KEY (user1_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user2_id) REFERENCES User(user_id) ON DELETE CASCADE
+);
 
-CREATE TABLE Post (
+CREATE TABLE IF NOT EXISTS Post (
     post_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -226,8 +231,7 @@ CREATE TABLE Post (
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Service (
+CREATE TABLE IF NOT EXISTS Service (
     service_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255),
     description TEXT,
@@ -239,8 +243,7 @@ CREATE TABLE Service (
     FOREIGN KEY (subcategory_id) REFERENCES SubCategory(subCategory_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Review (
+CREATE TABLE IF NOT EXISTS Review (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     comment TEXT,
     rating INT,
@@ -251,8 +254,7 @@ CREATE TABLE Review (
     FOREIGN KEY (service_id) REFERENCES Service(service_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Favorite (
+CREATE TABLE IF NOT EXISTS Favorite (
     favorite_id INT AUTO_INCREMENT PRIMARY KEY,
     post_id INT,
     user_id VARCHAR(36),
@@ -260,8 +262,7 @@ CREATE TABLE Favorite (
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Report (
+CREATE TABLE IF NOT EXISTS Report (
     reportID INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -271,18 +272,20 @@ CREATE TABLE Report (
     FOREIGN KEY (reported_id) REFERENCES Post(post_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Message (
+CREATE TABLE IF NOT EXISTS Message (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
     content TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     seen BOOLEAN DEFAULT false,
+    sender_id VARCHAR(36),
+    receiver_id VARCHAR(36),
     conversation_id INT,
+    FOREIGN KEY (sender_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES User(user_id) ON DELETE CASCADE,
     FOREIGN KEY (conversation_id) REFERENCES Conversation(conversation_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Notification (
+CREATE TABLE IF NOT EXISTS Notification (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,
     content VARCHAR(255) NOT NULL,
     user_id VARCHAR(36) NOT NULL,
@@ -292,8 +295,7 @@ CREATE TABLE Notification (
     FOREIGN KEY (receive_user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Appointment (
+CREATE TABLE IF NOT EXISTS Appointment (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT,
     status ENUM('pending', 'confirmed', 'processing', 'cancelled') DEFAULT 'pending',
@@ -308,26 +310,22 @@ CREATE TABLE Appointment (
     FOREIGN KEY (c_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Suggestion (
+CREATE TABLE IF NOT EXISTS Suggestion (
     suggestionID INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT,
     date DATE,
     user_id VARCHAR(36),
-    FOREIGN KEY (user_id) REFERENCES User(user_id),
-    CONSTRAINT FK_User_Suggestion FOREIGN KEY (user_id) REFERENCES User(user_id)
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
 );
 
-
-CREATE TABLE Picture (
+CREATE TABLE IF NOT EXISTS Picture (
     picture_id INT AUTO_INCREMENT PRIMARY KEY,
     link VARCHAR(255),
     service_id INT,
     FOREIGN KEY (service_id) REFERENCES Service(service_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE Price (
+CREATE TABLE IF NOT EXISTS Price (
     price_id INT AUTO_INCREMENT PRIMARY KEY,
     value DECIMAL(10, 2),
     description TEXT,
@@ -337,12 +335,4 @@ CREATE TABLE Price (
 );
 
 
-CREATE TABLE Conversation (
-    conversation_id INT AUTO_INCREMENT PRIMARY KEY,
-    user1_id VARCHAR(36),
-    user2_id VARCHAR(36),
-    seen BOOLEAN DEFAULT false,
-    FOREIGN KEY (user1_id) REFERENCES User(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (user2_id) REFERENCES User(user_id) ON DELETE CASCADE
-);
 
