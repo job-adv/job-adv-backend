@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import http_status_code from "../constant/http_status_code";
 import connect from "../config/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
+import http from 'http';
 
 
 
@@ -155,5 +156,43 @@ export default class UsereController {
     }
   }
 
+
+
+  static async updateUserCategory(req: Request, res: Response)
+  {
+     let status: number = http_status_code.serverError;
+     let {category_id, cv } = req.body;
+     let user = (req as any).user;
+     try{
+        let conn = await connect();
+        let qr = "select * from Category where category_id = ?";
+        let [row] = await conn.query<RowDataPacket[]>(qr, [category_id]);
+        if(row.length == 0){
+          status = http_status_code.bad_request;
+          throw new Error("that's category doesn't exist");
+        }
+
+        qr = "Update User set category_id= ?, cv= ?, verifier= ? where user_id= ?";
+        let [updated] = await conn.query<ResultSetHeader>(qr, [category_id, cv, false]);
+
+        if(updated.affectedRows == 0){
+          status = http_status_code.bad_request;
+          throw new Error("updating failed");
+        }
+
+        return res.status(http_status_code.ok).json({
+          success: true,
+          msg: "updating successfully"
+        })
+
+
+     }catch(e)
+     {
+      return res.status(status).json({
+        success: false,
+        msg: e instanceof Error? e.message : e
+      });
+     }
+  }
     
 }
