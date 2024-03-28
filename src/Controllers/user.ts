@@ -163,6 +163,7 @@ export default class UsereController {
      let status: number = http_status_code.serverError;
      let {category_id, cv } = req.body;
      let user = (req as any).user;
+     
      try{
         let conn = await connect();
         let qr = "select * from Category where category_id = ?";
@@ -173,7 +174,7 @@ export default class UsereController {
         }
 
         qr = "Update User set category_id= ?, cv= ?, verifier= ? where user_id= ?";
-        let [updated] = await conn.query<ResultSetHeader>(qr, [category_id, cv, false]);
+        let [updated] = await conn.query<ResultSetHeader>(qr, [category_id, cv, false, user.user_id]);
 
         if(updated.affectedRows == 0){
           status = http_status_code.bad_request;
