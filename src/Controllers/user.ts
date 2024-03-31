@@ -11,6 +11,29 @@ export default class UsereController {
       
 
 
+  static async getUser(req: Request, res: Response)
+  {
+     let status : number = http_status_code.serverError;
+     let user = (req as any).user;
+
+     try {
+        let conn = await connect();
+        let qr: string =  "select * from User where user_id= ?";
+        let [row] = await conn.query<RowDataPacket[]>(qr, [user.user_id]);
+        
+
+        return res.status(http_status_code.ok).json({
+          success: true,
+          data: row[0]
+        })
+     } catch (e) {
+       return res.status(status).json({
+         success: false,
+         msg: e instanceof Error? e.message : e
+       });
+     }
+  }
+
   static async allUser(req: Request, res: Response)
   {
    

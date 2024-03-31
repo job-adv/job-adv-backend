@@ -3096,6 +3096,76 @@
         }
       }
     },
+    "/getUser": {
+      "get": {
+        "summary": "Get user information",
+        "tags": ["user"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user_id": { "type": "number" },
+                        "firstname": { "type": "string" },
+                        "lastname": { "type": "string" },
+                        "email": { "type": "string" },
+                        "role": { "type": "string" },
+                        "category_id": { "type": "number" },
+                        "adress": { "type": "string" },
+                        "phone_number": { "type": "string" },
+                        "instagram_link": { "type": "string" },
+                        "tiktok_link": { "type": "string" },
+                        "facebook_link": { "type": "string" },
+                        "profile_picture": { "type": "string" },
+                        "cv": { "type": "string" },
+                        "disponible": { "type": "boolean" },
+                        "verifier": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/viewAll": {
       "get": {
         "summary": "View all users",
