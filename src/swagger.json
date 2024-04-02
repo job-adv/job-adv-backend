@@ -422,9 +422,9 @@
         }
       }
     },
-    "/appointment/viewCustomer": {
+    "/viewCustomer": {
       "get": {
-        "summary": "View appointments for a customer",
+        "summary": "Get appointments for a specific customer",
         "tags": ["appointment"],
         "security": [{"BearerAuth": []}],
         "responses": {
@@ -436,19 +436,53 @@
                   "type": "object",
                   "properties": {
                     "success": { "type": "boolean", "default": true },
-                    "number": { "type": "number" },
+                    "resultCount": { "type": "number" },
                     "data": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "appointment_id": { "type": "string" },
+                          "appointment_id": { "type": "number" },
                           "description": { "type": "string" },
-                          "service_id": { "type": "number" },
-                          "p_id": { "type": "number" }
+                          "date": { "type": "string", "format": "date" },
+                          "time": { "type": "string" },
+                          "service": {
+                            "type": "object",
+                            "properties": {
+                              "service_id": { "type": "number" },
+                              "title": { "type": "string" },
+                              "description": { "type": "string" },
+                              "status": { "type": "string" }
+                            }
+                          },
+                          "professional": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" },
+                              "role": { "type": "string" }
+                            }
+                          }
                         }
                       }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
                   }
                 }
               }
@@ -471,9 +505,9 @@
         }
       }
     },
-    "/appointment/viewProfessional": {
+    "/viewProfessional": {
       "get": {
-        "summary": "View appointments for a professional",
+        "summary": "Get appointments for a specific professional",
         "tags": ["appointment"],
         "security": [{"BearerAuth": []}],
         "responses": {
@@ -491,13 +525,47 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "appointment_id": { "type": "string" },
+                          "appointment_id": { "type": "number" },
                           "description": { "type": "string" },
-                          "service_id": { "type": "number" },
-                          "c_id": { "type": "number" }
+                          "date": { "type": "string", "format": "date" },
+                          "time": { "type": "string" },
+                          "service": {
+                            "type": "object",
+                            "properties": {
+                              "service_id": { "type": "number" },
+                              "title": { "type": "string" },
+                              "description": { "type": "string" },
+                              "status": { "type": "string" }
+                            }
+                          },
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" },
+                              "role": { "type": "string" }
+                            }
+                          }
                         }
                       }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
                   }
                 }
               }
@@ -666,27 +734,45 @@
     },
     "/favorite/view": {
       "get": {
-        "summary": "View all favorites of the authenticated user",
+        "summary": "Get all favorite services for the current user",
         "tags": ["favorite"],
-        "security": [{"BearerAuth": []}],
+        "security": [{"bearerAuth": []}],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "A list of favorite services",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "default": true },
-                    "resultCount": { "type": "number" },
+                    "success": {"type": "boolean", "example": true},
+                    "resultCount": {"type": "integer", "example": 2},
                     "data": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "favorite_id": { "type": "number" },
-                          "post_id": { "type": "number" },
-                          "user_id": { "type": "number" }
+                          "favorite_id": {"type": "integer", "example": 1},
+                          "service": {
+                            "type": "object",
+                            "properties": {
+                              "service_id": {"type": "integer", "example": 123},
+                              "title": {"type": "string", "example": "Service Title"},
+                              "description": {"type": "string", "example": "Service Description"},
+                              "status": {"type": "string", "example": "active"}
+                            }
+                          },
+                          "professional": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": {"type": "string", "example": "abc123"},
+                              "username": {"type": "string", "example": "professional_username"},
+                              "firstname": {"type": "string", "example": "Professional Firstname"},
+                              "lastname": {"type": "string", "example": "Professional Lastname"},
+                              "email": {"type": "string", "example": "professional@example.com"},
+                              "role": {"type": "string", "example": "professional"}
+                            }
+                          }
                         }
                       }
                     }
@@ -696,14 +782,14 @@
             }
           },
           "500": {
-            "description": "Server error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "default": false },
-                    "msg": { "type": "string" }
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Internal server error message"}
                   }
                 }
               }
@@ -714,61 +800,60 @@
     },
     "/favorite/add": {
       "post": {
-        "summary": "Add a post to favorites",
+        "summary": "Add a service to favorites",
         "tags": ["favorite"],
-        "security": [{"BearerAuth": []}],
+        "security": [{"bearerAuth": []}],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "post_id": { "type": "number" }
+                  "service_id": {"type": "integer"}
                 },
-                "required": ["post_id"]
+                "required": ["service_id"]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Service added to favorites successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "default": true },
-                    "msg": { "type": "string" }
+                    "success": {"type": "boolean", "example": true},
+                    "msg": {"type": "string", "example": "service added to favorites successfully"}
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "default": false },
-                    "msg": { "type": "string" }
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Favorite not added"}
                   }
                 }
               }
             }
           },
           "500": {
-            "description": "Server error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "default": false },
-                    "msg": { "type": "string" }
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Internal server error message"}
                   }
                 }
               }
@@ -1014,9 +1099,9 @@
         }
       }
     },
-    "/historique/view": {
+    "/view": {
       "get": {
-        "summary": "View appointment history of the authenticated user",
+        "summary": "Get appointments for a specific user",
         "tags": ["historique"],
         "security": [{"BearerAuth": []}],
         "responses": {
@@ -1037,14 +1122,46 @@
                           "appointment_id": { "type": "number" },
                           "description": { "type": "string" },
                           "service_id": { "type": "number" },
-                          "c_id": { "type": "number" },
-                          "p_id": { "type": "number" },
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" },
+                              "username": { "type": "string" }
+                            }
+                          },
+                          "professional": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" },
+                              "username": { "type": "string" }
+                            }
+                          },
                           "status": { "type": "string" },
-                          "date": { "type": "string" },
+                          "date": { "type": "string", "format": "date" },
                           "time": { "type": "string" }
                         }
                       }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
                   }
                 }
               }
@@ -1068,9 +1185,9 @@
       }
     },
  
-    "/notification/view": {
+    "notification/view": {
       "get": {
-        "summary": "View notifications of the authenticated user",
+        "summary": "Get notifications for the current user",
         "tags": ["notification"],
         "security": [{"BearerAuth": []}],
         "responses": {
@@ -1091,10 +1208,33 @@
                           "notification_id": { "type": "number" },
                           "content": { "type": "string" },
                           "user_id": { "type": "number" },
-                          "receive_user_id": { "type": "number" }
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" }
+                            }
+                          }
                         }
                       }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
                   }
                 }
               }

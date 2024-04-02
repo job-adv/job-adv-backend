@@ -7,27 +7,29 @@ import connect from "../config/db";
 export default class NotificationController{
 
 
-   static async view(req: Request, res: Response)
-   {
-      let status:number = http_status_code.serverError;
-      let user = (req as any).user;
-      try{
-          let conn = await connect();
-          let qr: string = "select * from Notification where receive_user_id= ?";
-          let [rows] = await conn.query<RowDataPacket[]>(qr, [user.user_id]);
+  static async view(req: Request, res: Response) {
+    let status: number = http_status_code.serverError;
+    let user = (req as any).user;
+    try {
+        let conn = await connect();
+        let qr: string = `
+            SELECT n.notification_id, n.content, n.user_id, u.* 
+            FROM Notification n
+            JOIN User u ON n.receive_user_id = u.user_id
+            WHERE n.receive_user_id = ?`;
+        let [rows] = await conn.query<RowDataPacket[]>(qr, [user.user_id]);
 
-          return res.status(http_status_code.ok).json({
-             success: true,
-             resultCount: rows.length,
-             data: rows
-          })
-      }
-      catch(e){
+        return res.status(http_status_code.ok).json({
+            success: true,
+            resultCount: rows.length,
+            data: rows
+        });
+    } catch (e) {
         return res.status(status).json({
-        success: false,
-        msg: e instanceof Error? e.message : e
-      });
-    }
+            success: false,
+            msg: e instanceof Error ? e.message : e
+        });
+     }
    }
 
 

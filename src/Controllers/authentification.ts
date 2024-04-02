@@ -96,9 +96,9 @@ export default class AuthController {
 
     static async login(req: Request, res: Response)
     {
+
       let status: number = http_status_code.serverError;
       let { email, password } = req.body as { email : string, password: string};
-
       try{
 
         let conn = await connect();

@@ -171,6 +171,23 @@ CREATE TABLE Price (
 );*/
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 CREATE TABLE IF NOT EXISTS Category (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(255),
@@ -256,9 +273,9 @@ CREATE TABLE IF NOT EXISTS Review (
 
 CREATE TABLE IF NOT EXISTS Favorite (
     favorite_id INT AUTO_INCREMENT PRIMARY KEY,
-    post_id INT,
+    service_id INT,
     user_id VARCHAR(36),
-    FOREIGN KEY (post_id) REFERENCES Post(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES Service(service_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
@@ -333,6 +350,8 @@ CREATE TABLE IF NOT EXISTS Price (
     service_id INT,
     FOREIGN KEY (service_id) REFERENCES Service(service_id) ON DELETE CASCADE
 );
+
+
 
 
 
