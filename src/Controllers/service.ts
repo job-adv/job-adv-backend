@@ -25,7 +25,6 @@ export default class ServiceController {
         const conn = await connect();
         const qr: string = "SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
         const [rows] = await conn.query<RowDataPacket[]>(qr, [subCategory_id]);
-        console.log(rows);
 
         const result: any = {};
         rows.forEach((row: any) => {
@@ -45,7 +44,11 @@ export default class ServiceController {
                        firstname: row.firstname, 
                        lastname: row.lastname,
                        adress: row.adress,
-                       phone_number: row.phone_number
+                       phone_number: row.phone_number,
+                       instagram_link: row.instagram_link,
+                       facebook_link: row.facebook_link,
+                       tiktok_link: row.tiktok_link,
+                       profile_picture: row.profile_picture
                    },
                    pictures: [],
                    prices: []
@@ -119,7 +122,11 @@ export default class ServiceController {
                        firstname: row.firstname, 
                        lastname: row.lastname,
                        adress: row.adress,
-                       phone_number: row.phone_number
+                       phone_number: row.phone_number,
+                       instagram_link: row.instagram_link,
+                       facebook_link: row.facebook_link,
+                       tiktok_link: row.tiktok_link,
+                       profile_picture: row.profile_picture
                    },
                    pictures: [],
                    prices: []
@@ -193,7 +200,11 @@ export default class ServiceController {
                        firstname: row.firstname, 
                        lastname: row.lastname,
                        adress: row.adress,
-                       phone_number: row.phone_number
+                       phone_number: row.phone_number,
+                       instagram_link: row.instagram_link,
+                       facebook_link: row.facebook_link,
+                       tiktok_link: row.tiktok_link,
+                       profile_picture: row.profile_picture
                    },
                    pictures: [],
                    prices: []
