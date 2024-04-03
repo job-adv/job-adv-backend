@@ -2400,7 +2400,7 @@
         }
       }
     },
-    "/service/viewAllmyService": {
+    "/service/viewMyServices": {
       "get": {
         "summary": "View all services of the authenticated user",
         "tags": ["service"],
