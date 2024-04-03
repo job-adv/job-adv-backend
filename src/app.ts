@@ -1,6 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { Request, Response, NextFunction , Express} from "express";
+import  search from "./Routes/search";
 import auth from "./Routes/auth";
 import appointment from "./Routes/appointment";
 import category from "./Routes/category";
@@ -46,6 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use("/", auth);
+app.use("/search", search);
 app.use("/category", category);
 app.use("/appointment", appointment);
 app.use("/favorite", favorite);

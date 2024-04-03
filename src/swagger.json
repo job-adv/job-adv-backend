@@ -1354,6 +1354,191 @@
         }
       }
     },
+    "/": {
+      "get": {
+        "summary": "Search for users, services, and posts",
+        "tags": ["Search"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "The search text"
+                  }
+                },
+                "required": ["text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artisans": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": {"type": "string"},
+                              "role": {"type": "string"},
+                              "username": {"type": "string"},
+                              "firstname": {"type": "string"},
+                              "lastname": {"type": "string"},
+                              "email": {"type": "string"},
+                              "address": {"type": "string"},
+                              "phone_number": {"type": "string"},
+                              "instagram_link": {"type": "string"},
+                              "facebook_link": {"type": "string"},
+                              "tiktok_link": {"type": "string"},
+                              "profile_picture": {"type": "string"}
+                            }
+                          }
+                        },
+                        "clients": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": {"type": "string"},
+                              "role": {"type": "string"},
+                              "username": {"type": "string"},
+                              "firstname": {"type": "string"},
+                              "lastname": {"type": "string"},
+                              "email": {"type": "string"},
+                              "address": {"type": "string"},
+                              "phone_number": {"type": "string"},
+                              "instagram_link": {"type": "string"},
+                              "facebook_link": {"type": "string"},
+                              "tiktok_link": {"type": "string"},
+                              "profile_picture": {"type": "string"},
+                              "disponible": {"type": "string"}
+                            }
+                          }
+                        },
+                        "services": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "service_id": {"type": "integer"},
+                              "title": {"type": "string"},
+                              "description": {"type": "string"},
+                              "status": {"type": "string"},
+                              "created_at": {"type": "string", "format": "date-time"},
+                              "subcategory_id": {"type": "string"},
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "user_id": {"type": "string"},
+                                  "username": {"type": "string"},
+                                  "firstname": {"type": "string"},
+                                  "lastname": {"type": "string"},
+                                  "adress": {"type": "string"},
+                                  "phone_number": {"type": "string"},
+                                  "instagram_link": {"type": "string"},
+                                  "facebook_link": {"type": "string"},
+                                  "tiktok_link": {"type": "string"},
+                                  "profile_picture": {"type": "string"}
+                                }
+                              },
+                              "pictures": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "picture_id": {"type": "integer"},
+                                    "link": {"type": "string"}
+                                  }
+                                }
+                              },
+                              "prices": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "price_id": {"type": "integer"},
+                                    "value": {"type": "number"},
+                                    "description": {"type": "string"},
+                                    "rate": {"type": "string"}
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "posts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "post_id": {"type": "integer"},
+                              "title": {"type": "string"},
+                              "created_at": {"type": "string", "format": "date-time"},
+                              "description": {"type": "string"},
+                              "status": {"type": "string"},
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "user_id": {"type": "string"},
+                                  "role": {"type": "string"},
+                                  "username": {"type": "string"},
+                                  "firstname": {"type": "string"},
+                                  "lastname": {"type": "string"},
+                                  "email": {"type": "string"},
+                                  "adress": {"type": "string"},
+                                  "phone_number": {"type": "string"},
+                                  "instagram_link": {"type": "string"},
+                                  "facebook_link": {"type": "string"},
+                                  "tiktok_link": {"type": "string"},
+                                  "profile_picture": {"type": "string"},
+                                  "post_id": {"type": "string"},
+                                  "title":{"type": "string"},
+                                  "post_created_at":{"type": "string"}, 
+                                  "description":{"type": "string"},
+                                  "status":{"type": "string"}
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "An error occurred"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+   },
     "/picture/add": {
       "post": {
         "summary": "Add a picture",
@@ -2345,7 +2530,7 @@
                               "username": { "type": "string" },
                               "firstname": { "type": "string" },
                               "lastname": { "type": "string" },
-                              "address": { "type": "string" },
+                              "adress": { "type": "string" },
                               "phone_number": { "type": "string" },
                               "instagram_link": { "type": "string" },
                               "facebook_link": { "type": "string" },
@@ -2428,7 +2613,7 @@
                               "username": { "type": "string" },
                               "firstname": { "type": "string" },
                               "lastname": { "type": "string" },
-                              "address": { "type": "string" },
+                              "adress": { "type": "string" },
                               "phone_number": { "type": "string" },
                               "instagram_link": { "type": "string" },
                               "facebook_link": { "type": "string" },
@@ -2565,7 +2750,7 @@
                             "username": { "type": "string" },
                             "firstname": { "type": "string" },
                             "lastname": { "type": "string" },
-                            "address": { "type": "string" },
+                            "adress": { "type": "string" },
                             "phone_number": { "type": "string" },
                             "instagram_link": { "type": "string" },
                             "facebook_link": { "type": "string" },

@@ -23,7 +23,7 @@ export default class ServiceController {
         const { subCategory_id } = req.body as { subCategory_id: string };
 
         const conn = await connect();
-        const qr: string = "SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
+        const qr: string = "SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.role, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
         const [rows] = await conn.query<RowDataPacket[]>(qr, [subCategory_id]);
 
         const result: any = {};
@@ -43,6 +43,7 @@ export default class ServiceController {
                        username: row.username,
                        firstname: row.firstname, 
                        lastname: row.lastname,
+                       role: row.role,
                        adress: row.adress,
                        phone_number: row.phone_number,
                        instagram_link: row.instagram_link,
@@ -100,7 +101,7 @@ export default class ServiceController {
      console.log(user.user_id);
      try{
        let conn = await connect();
-       let qr: string ="SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
+       let qr: string ="SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.role, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
 
        let [rows] = await conn.query<RowDataPacket[]>(qr, [user.user_id]);
 
@@ -121,6 +122,7 @@ export default class ServiceController {
                        username: row.username,
                        firstname: row.firstname, 
                        lastname: row.lastname,
+                       role: row.role,
                        adress: row.adress,
                        phone_number: row.phone_number,
                        instagram_link: row.instagram_link,
@@ -133,7 +135,7 @@ export default class ServiceController {
                };
            }
        
-           // Check if the picture exists for the service
+           
            const pictureExists = result[row.service_id].pictures.some((pic: any) => pic.picture_id === row.picture_id);
            if (row.picture_id && !pictureExists) {
                result[row.service_id].pictures.push({
@@ -142,7 +144,7 @@ export default class ServiceController {
                });
            }
        
-           // Check if the price exists for the service
+           
            const priceExists = result[row.service_id].prices.some((pri: any) => pri.price_id === row.price_id);
            if (row.price_id && !priceExists) {
                result[row.service_id].prices.push({
@@ -154,7 +156,7 @@ export default class ServiceController {
            }
        });
 
-        // Convert object to array
+        
         const finalResult = Object.values(result);
        
 
@@ -181,7 +183,7 @@ export default class ServiceController {
            
      try {
        let conn = await connect();
-       let qr: string = "SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.Service_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
+       let qr: string = "SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.role, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.Service_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
        let [rows] = await conn.query<RowDataPacket[]>(qr, [service_id]);
        const result: any = {};
        rows.forEach((row: any) => {
@@ -199,6 +201,7 @@ export default class ServiceController {
                        username: row.username,
                        firstname: row.firstname, 
                        lastname: row.lastname,
+                       role: row.role,
                        adress: row.adress,
                        phone_number: row.phone_number,
                        instagram_link: row.instagram_link,
