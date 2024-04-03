@@ -11,7 +11,7 @@ router.route('/viewAll').get(service.viewAll);
 router.route('/viewMyservices').get([verify], service.viewAllmyService);
 router.route("/update/:service_id").patch(service.UpdateService);
 router.route("/delete/:service_id").delete(service.deleteService);
-router.route("/getoneservice").get(service.Oneservice);
+router.route("/getoneservice/:service_id").get(service.Oneservice);
 router.route('/create').post([verify, verify_pro], service.create);
 
 

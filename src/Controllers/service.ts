@@ -23,15 +23,22 @@ export default class ServiceController {
         const { subCategory_id } = req.body as { subCategory_id: string };
 
         const conn = await connect();
-        const qr: string = "SELECT User.user_id, User.firstname, User.lastname, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Service.*, Price.price_id, Price.value AS value, Picture.picture_id, Picture.link AS link FROM User JOIN Service ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
+        const qr: string = "SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
         const [rows] = await conn.query<RowDataPacket[]>(qr, [subCategory_id]);
-
+        console.log(rows);
 
         const result: any = {};
         rows.forEach((row: any) => {
            if (!result[row.service_id]) {
                result[row.service_id] = {
-                   service_id: row.service_id,
+                service_id: row.service_id,
+                title: row.title, 
+                description: row.description,
+                status: row.status,
+                created_at: row.created_at,
+                user_id: row.user_id,
+                subcategory_id: row.subCategory_id,
+                      
                    user: {
                        user_id: row.user_id,
                        username: row.username,
@@ -90,7 +97,7 @@ export default class ServiceController {
      console.log(user.user_id);
      try{
        let conn = await connect();
-       let qr: string ="SELECT User.user_id, User.firstname, User.lastname, User.adress, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Service.*, Price.price_id, Price.value AS value, Picture.picture_id, Picture.link AS link FROM User JOIN Service ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.user_id= ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
+       let qr: string ="SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
 
        let [rows] = await conn.query<RowDataPacket[]>(qr, [user.user_id]);
 
@@ -99,7 +106,13 @@ export default class ServiceController {
        rows.forEach((row: any) => {
            if (!result[row.service_id]) {
                result[row.service_id] = {
-                   service_id: row.service_id,
+                service_id: row.service_id,
+                title: row.title, 
+                description: row.description,
+                status: row.status,
+                created_at: row.created_at,
+                user_id: row.user_id,
+                subcategory_id: row.subCategory_id,
                    user: {
                        user_id: row.user_id,
                        username: row.username,
@@ -161,13 +174,19 @@ export default class ServiceController {
            
      try {
        let conn = await connect();
-       let qr: string = "SELECT User.user_id, User.firstname, User.lastname, User.adress, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Service.*, Price.price_id, Price.value AS value, Picture.picture_id, Picture.link AS link FROM User JOIN Service ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.service_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
+       let qr: string = "SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.Service_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
        let [rows] = await conn.query<RowDataPacket[]>(qr, [service_id]);
        const result: any = {};
        rows.forEach((row: any) => {
            if (!result[row.service_id]) {
                result[row.service_id] = {
-                   service_id: row.service_id,
+                service_id: row.service_id,
+                title: row.title, 
+                description: row.description,
+                status: row.status,
+                created_at: row.created_at,
+                user_id: row.user_id,
+                subcategory_id: row.subCategory_id,
                    user: {
                        user_id: row.user_id,
                        username: row.username,

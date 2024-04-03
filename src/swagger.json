@@ -2530,7 +2530,7 @@
         }
       }
     },
-    "/service/Oneservice/{service_id}": {
+    "/service/getoneservice/{service_id}": {
       "get": {
         "summary": "View details of a single service",
         "tags": ["service"],
