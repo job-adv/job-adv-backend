@@ -8,7 +8,7 @@ const router = Router();
 
 
 router.route('/viewAll').get(service.viewAll);
-router.route('/viewMyservices').get([verify], service.viewAllmyService);
+router.route('/viewMyServices').get([verify], service.viewAllmyService);
 router.route("/update/:service_id").patch(service.UpdateService);
 router.route("/delete/:service_id").delete(service.deleteService);
 router.route("/getoneservice/:service_id").get(service.Oneservice);
