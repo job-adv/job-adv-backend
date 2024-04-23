@@ -255,6 +255,7 @@ CREATE TABLE IF NOT EXISTS Service (
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     rating DECIMAL(3,2) DEFAULT 0, 
+    star DECIMAL(3,2) DEFAULT 0, 
     client_number INT DEFAULT 0, 
     user_id VARCHAR(36),
     subcategory_id INT,

@@ -9,27 +9,27 @@ export default async function verifyToken(req: Request, res: Response, next: Nex
     try {
         const authHeader: string | undefined = req.headers.authorization || req.headers.Authorization as string;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            status = http_status_code.Forbidden;
-            throw new Error("Token not valid");
+            return next();
         }
         const token: string = authHeader.split(" ")[1];
         jwt.verify(token, process.env.ACCESS_TOKEN_KEY as string, async (err: jwt.VerifyErrors | null, decoded: any) => {
             if (err) {
                 if (!req.cookies || !req.cookies.jwt) {
-                    return res.status(401).json({ success: false, msg: "Unauthorized" });
+                    return  next();
+                    return res.status(401).json({ success: false, msg: "Unauthorized1" });
                 }
 
                 const refreshToken = await req.cookies.jwt;
 
                 jwt.verify(refreshToken, process.env.REFRECH_TOKEN_KEY as string, async (err: any, decoded: any) => {
                     if (err) {
-                        return res.status(401).json({ success: false, msg: "Unauthorized" });
+                        return res.status(401).json({ success: false, msg: "Unauthorized2" });
                     }
-
+ 
                     const user = {
                         user_id: decoded.user_id,
-                        firstname: decoded.first_name,
-                        lastname: decoded.last_name,
+                        firstname: decoded.firstname,
+                        lastname: decoded.lastname,
                         username: decoded.username,
                         email: decoded.email,
                         role: decoded.role,

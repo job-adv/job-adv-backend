@@ -3,6 +3,28 @@ import http_status_code from '../constant/http_status_code';
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import connect from "../config/db";
 
+
+
+
+
+
+const sortByAddressAndRating = (userAddress: string) => {
+  return (a: any, b: any) => {
+      if (a.user.adress === userAddress && b.user.adress === userAddress) {
+          return b.rating - a.rating; 
+      } else if (a.user.adress === userAddress) {
+          return -1; 
+      } else if (b.user.adress === userAddress) {
+          return 1; 
+      } else {
+          return 0; 
+      }
+  };
+};
+
+
+
+
 interface Price {
     value: number;
     description: string;
@@ -18,12 +40,15 @@ export default class ServiceController {
 
   static async viewAll(req: Request, res: Response) {
     let status: number = http_status_code.serverError;
-
+    let user = (req as any).user;
+    let adress = user ? user.adress : "";
+    console.log(adress)
     try {
         const conn = await connect();
         const qr: string = `
             SELECT 
                 s.service_id,
+                s.rating,
                 s.title AS service_title,
                 s.description AS service_description,
                 u.user_id,
@@ -50,9 +75,10 @@ export default class ServiceController {
             GROUP BY 
                 s.service_id, p.picture_id, pr.price_id
             ORDER BY 
-                s.created_at DESC`;
+                u.adress ASC, s.rating DESC`;
         
         const [rows] = await conn.query<RowDataPacket[]>(qr);
+       
         conn.release();
 
         const result: any = {};
@@ -63,6 +89,7 @@ export default class ServiceController {
                     service_id: row.service_id,
                     title: row.service_title,
                     description: row.service_description,
+                    rating: row.rating,
                     user: {
                         user_id: row.user_id,
                         username: row.username,
@@ -97,9 +124,15 @@ export default class ServiceController {
             }
         });
 
-        // Convert object to array
         const finalResult = Object.values(result);
-
+        console.log(adress)
+        if(adress == null || adress == undefined || adress== ""){
+          finalResult.sort((a: any, b: any) => b.rating - a.rating);
+        }else {
+             finalResult.sort((a: any, b: any) => b.rating - a.rating);
+             finalResult.sort(sortByAddressAndRating(adress));
+        }
+        
         return res.status(http_status_code.ok).json({
             success: true,
             resultCount: finalResult.length,
@@ -413,8 +446,8 @@ static async viewAllmyService(req: Request, res: Response) {
           throw new Error("service not created error");
         }
     
-        qr = "select * from Service where title= ? and description= ? and subCategory_id= ?";
-        const [row] = await conn.query<RowDataPacket[]>(qr, [title, description, subCategory_id]);
+        qr = "select * from Service where title= ? and description= ? and subCategory_id= ? and user_id= ?";
+        const [row] = await conn.query<RowDataPacket[]>(qr, [title, description, subCategory_id, user.user_id]);
         const service_id = row[0].service_id;
     
         if (prices.length !== 0) {
@@ -468,7 +501,7 @@ static async viewAllmyService(req: Request, res: Response) {
        conn.release();
        if(updating.affectedRows == 0)
        {
-          status: http_status_code.bad_request;
+          status= http_status_code.bad_request;
           throw new Error("Upadating error");
        }
 

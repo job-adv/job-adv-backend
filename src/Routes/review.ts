@@ -1,5 +1,7 @@
 import { Router } from "express";
 import review from "../Controllers/review";
+import verify from "../middlewares/verify_Token";
+import verifyToken from "../middlewares/verify_Token";
 const router = Router();
 
 
@@ -7,9 +9,9 @@ const router = Router();
 
 
 router.route('/view/:service_id').get(review.ViewAll);
-router.route('/add').post(review.addReview);
-router.route("/update/:review_id").patch(review.UpdateReview);
-router.route("/delete/:review_id").patch(review.deleteReview);
+router.route('/add').post([verify],review.addReview);
+router.route("/update/:review_id").patch([verify],review.UpdateReview);
+router.route("/delete/:review_id").patch([verify],review.deleteReview);
 
 
 

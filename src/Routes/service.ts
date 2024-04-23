@@ -2,12 +2,13 @@ import { Router } from "express";
 import service from "../Controllers/service";
 import verify from "../middlewares/verify_Token"
 import verify_pro from "../middlewares/verifiy_professional";
+import viewALLservice from "../middlewares/serviceViewALL";
 const router = Router();
 
 
 
 
-router.route('/viewAll').get(service.viewAll);
+router.route('/viewAll').get([viewALLservice], service.viewAll);
 router.route('/viewMyServices').get([verify], service.viewAllmyService);
 router.route("/update/:service_id").patch(service.UpdateService);
 router.route("/delete/:service_id").delete(service.deleteService);

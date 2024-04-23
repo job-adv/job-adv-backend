@@ -8,9 +8,17 @@ export default class ReviewController {
   static async addReview(req: Request, res: Response) {
     let status: number = http_status_code.serverError;
     let user = (req as any).user;
+    console.log(user.user_id);
     let { comment, rating, service_id } = req.body as { comment: string, rating: number, service_id: number };
     try {
+      console.log(user.user_id)
       let conn = await connect();
+      let [verifier] = await conn.query<RowDataPacket[]>("select * from Review where service_id= ? and user_id= ?", [service_id, user.user_id]);
+      if(verifier.length > 0){
+        status = http_status_code.bad_request;
+        throw new Error("you already review this service");
+      }
+
       let qr: string = "INSERT INTO Review(`comment`, `rating`, `service_id`, `user_id`) VALUES (?, ?, ?, ?)";
       let [added] = await conn.query<ResultSetHeader>(qr, [comment, rating, service_id, user.user_id]);
 
@@ -19,22 +27,27 @@ export default class ReviewController {
 
 let totalRating = 0;
 for (const row of reviewRows) {
-    totalRating += row.rating;
+    totalRating += Number(row.rating);
 }
-console.log("total rating: "+totalRating);
+console.log("total rating: " + totalRating);
 console.log("lenght: "+ reviewRows.length);
 let reviewAverage = totalRating / reviewRows.length;
-console.log(reviewAverage);
-const incrementQuery = "UPDATE Service SET client_number = client_number + 1 WHERE service_id = ?";
-await conn.query(incrementQuery, [service_id]);
+console.log("average review: "+reviewAverage);
+
+
+qr = "select * from Favorite where service_id= ? and user_id= ?";
+let [favorite] = await conn.query<RowDataPacket[]>(qr, [service_id, user.user_id]);
+let calcule_favorite = favorite.length;
+console.log("favorite calcule: "+ calcule_favorite);
 
 const clientNumberQuery = "SELECT client_number FROM Service WHERE service_id = ?";
 const [numberRows] = await conn.query<RowDataPacket[]>(clientNumberQuery, [service_id]);
 const client_number = Number(numberRows[0].client_number);
-const finalRating = (reviewAverage * 0.65) + (client_number * 0.35);
+console.log("client number"+client_number);
+const finalRating = (reviewAverage * 0.7) + (client_number * 0.25)+ (calcule_favorite * 0.5);
 
-const updateQuery = "UPDATE Service SET rating = ? WHERE service_id = ?";
-await conn.query(updateQuery, [finalRating.toFixed(2), service_id]);
+const updateQuery = "UPDATE Service SET rating = ?, star= ? WHERE service_id = ?";
+await conn.query(updateQuery, [finalRating.toFixed(2), reviewAverage ,service_id]);
 
 console.log("Final Rating:", finalRating.toFixed(2));
 

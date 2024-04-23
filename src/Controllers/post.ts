@@ -4,28 +4,50 @@ import connect from "../config/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 export default class special_Request {
-
    static async view_All_special_Request(req: Request, res: Response) {
       let status: number = http_status_code.serverError;
+      let user = (req as any).user;
+      let adress = user ? user.adress : "";
+  
       try {
-         let conn = await connect();
-         let qr: string = "SELECT Post.user_id, username, firstname, lastname, adress, phone_number, profile_picture, post_id, title, Post.created_at AS post_created_at, description, status FROM User, Post WHERE User.user_id = Post.user_id ORDER BY Post.created_at DESC";
-         let [rows] = await conn.query<RowDataPacket[]>(qr);
-         conn.release(); // Release the connection back to the pool
-
-         return res.status(http_status_code.ok).json({
-            success: true,
-            resultCount: rows.length,
-            data: rows
-         });
+          let conn = await connect();
+          let qr: string = `SELECT Post.user_id, username, firstname, lastname, adress, phone_number, profile_picture, post_id, title, Post.created_at AS post_created_at, description, status 
+                              FROM User, Post 
+                              WHERE User.user_id = Post.user_id`;
+          let [rows] = await conn.query<RowDataPacket[]>(qr);
+          conn.release(); 
+  
+          const clientPosts = rows.filter((row) => row.adress === adress);
+  
+          
+          clientPosts.sort((a: any, b: any) => new Date(b.post_created_at).getTime() - new Date(a.post_created_at).getTime());
+  
+          
+          const otherPosts = rows.filter((row) => row.adress !== adress);
+  
+          
+          otherPosts.sort((a: any, b: any) => {
+              if (a.adress === b.adress) {
+                  return new Date(b.post_created_at).getTime() - new Date(a.post_created_at).getTime();
+              } else {
+                  return a.adress.localeCompare(b.adress);
+              }
+          });
+  
+         
+          const sortedRows = clientPosts.concat(otherPosts);
+          return res.status(http_status_code.ok).json({
+              success: true,
+              resultCount: sortedRows.length,
+              data: sortedRows
+          });
       } catch (e) {
-         return res.status(status).json({
-            success: false,
-            msg: e instanceof Error ? e.message : e
-         });
-      }
-      
-   }
+          return res.status(status).json({
+              success: false,
+              msg: e instanceof Error ? e.message : e
+          });
+      }   
+  }
 
    static async addPost(req: Request, res: Response) {
       let status: number = http_status_code.serverError;
@@ -35,7 +57,7 @@ export default class special_Request {
          let conn = await connect();
          let qr: string = "INSERT INTO Post(`title`, `description`, `user_id`) VALUES(?, ?, ?)";
          let [row] = await conn.query<ResultSetHeader>(qr, [title, description, user.user_id]);
-         conn.release(); // Release the connection back to the pool
+         conn.release(); 
 
          if (row.affectedRows == 0) {
             status = http_status_code.bad_request;

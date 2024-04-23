@@ -49,7 +49,7 @@ export default class AppointmentController {
     let appointment_id = req.params.appointment_id;
     let user = (req as any).user;
     let conn;
-    console.log(req.body);
+    
 
     try {
       conn = await connect();
@@ -69,7 +69,7 @@ export default class AppointmentController {
        qr = "SELECT p_id FROM Appointment WHERE c_id = ? AND date = ? AND time = ? AND appointment_id NOT IN (?)";
        const [verification] = await conn.query<RowDataPacket[]>(qr, [user.user_id, date, time, appointment_id]);
     
-    console.log(verification);
+   
     if (verification.length > 0) {
       status = http_status_code.bad_request;
       throw new Error("La date et l'heure que vous avez demandées sont déjà réservées. Veuillez choisir une autre date et heure pour votre rendez-vous.");

@@ -6,17 +6,78 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 export default class Search {
    
   static async search(req: Request, res: Response) {
-    let { text } = req.body;
+    let { text, adress } = req.body;
+    let trimmedParts: string[] = ["", ""]; 
+
+    if (adress !== undefined) {
+         const parts = adress.split(","); 
+         trimmedParts = parts.map((part: any) => part.trim()); 
+         console.log(trimmedParts[0], "         " + trimmedParts[1]);
+    } else {
+         trimmedParts[0] = " "; 
+         trimmedParts[1] = " "; 
+}
     console.log(text);
     let status: number = http_status_code.serverError;
     try {
       const conn = await connect(); 
 
-      let qr = "SELECT * FROM User WHERE role = 'professional' AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ?)";
-      let [artisan] = await conn.query<RowDataPacket[]>(qr, [`%${text}%`, `%${text}%`, `%${text}%`, `%${text}%`]);
+      let qr = `
+      SELECT *
+      FROM User
+      WHERE role = 'professional'
+          AND (
+              
+              (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+              OR (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+              OR username LIKE ?
+              OR firstname LIKE ?
+              OR lastname LIKE ?
+          )
+  `;
+  let [artisan] = await conn.query<RowDataPacket[]>(qr, [
+      `%${trimmedParts[0]}%`,
+      `%${trimmedParts[1]}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${trimmedParts[0]}%`,
+      `%${trimmedParts[1]}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`
+  ]);
 
-      qr = "SELECT * FROM User WHERE role = 'customer' AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ?)";
-      let [client] = await conn.query<RowDataPacket[]>(qr, [`%${text}%`, `%${text}%`, `%${text}%`, `%${text}%`]);
+      qr = `
+      SELECT *
+      FROM User
+      WHERE role = 'customer'
+          AND (
+              
+              (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+              OR (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+              OR username LIKE ?
+              OR firstname LIKE ?
+              OR lastname LIKE ?
+          )
+      `;
+      let [client] = await conn.query<RowDataPacket[]>(qr, [ 
+      `%${trimmedParts[0]}%`,
+      `%${trimmedParts[1]}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${trimmedParts[0]}%`,
+      `%${trimmedParts[1]}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`,
+      `%${text}%`]);
 
       qr = `
         SELECT 
