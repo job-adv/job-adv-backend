@@ -254,6 +254,8 @@ CREATE TABLE IF NOT EXISTS Service (
     description TEXT,
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    rating DECIMAL(3,2) DEFAULT 0, 
+    client_number INT DEFAULT 0, 
     user_id VARCHAR(36),
     subcategory_id INT,
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
@@ -263,7 +265,7 @@ CREATE TABLE IF NOT EXISTS Service (
 CREATE TABLE IF NOT EXISTS Review (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     comment TEXT,
-    rating INT,
+    rating DECIMAL(3,2) DEFAULT 0, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id VARCHAR(36),
     service_id INT,
@@ -315,7 +317,7 @@ CREATE TABLE IF NOT EXISTS Notification (
 CREATE TABLE IF NOT EXISTS Appointment (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT,
-    status ENUM('pending', 'confirmed', 'processing', 'cancelled') DEFAULT 'pending',
+    status ENUM('pending', 'confirmed', 'processing', 'cancelled', 'completed') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date DATE,
     time TIME,

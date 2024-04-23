@@ -25,11 +25,11 @@ export default async function verifyToken(req: Request, res: Response, next: Nex
                     if (err) {
                         return res.status(401).json({ success: false, msg: "Unauthorized" });
                     }
-
+ 
                     const user = {
                         user_id: decoded.user_id,
-                        firstname: decoded.first_name,
-                        lastname: decoded.last_name,
+                        firstname: decoded.firstname,
+                        lastname: decoded.lastname,
                         username: decoded.username,
                         email: decoded.email,
                         role: decoded.role,

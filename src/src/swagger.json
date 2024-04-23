@@ -1,0 +1,4059 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Authentication API",
+    "description": "API for user authentication and category management",
+    "version": "1.0.0"
+  },
+  "tags": [
+    { "name": "user", "description": "Operations related to user management" },
+    { "name": "category", "description": "Operations related to category management" },
+    { "name": "appointment", "description": "Operations related to appointments" },
+    { "name": "favorite", "description": "Operations related to favorites" },
+    { "name": "historique", "description": "Operations related to Historique"},
+    { "name": "notification", "description": "Operations related to Notification"},
+    { "name": "picture", "description": "Operations related to Pictures"},
+    { "name": "post", "description": "Operations related to Post management"},
+    { "name": "price", "description": "Operations related to Pictures"},
+    { "name": "report", "description": "Operations related to Report management"},
+    { "name": "review", "description": "Operations related to Review management"},
+    { "name": "service", "description": "Operations related to service management"},
+    { "name": "subCategory", "description": "Operations related to SubCategory management"},
+    { "name": "conversation", "description": "Operations related to Conversation management"},
+    { "name": "message", "description": "Operations related to messages management"}
+  ],
+  "paths": {
+    "/signup": {
+      "post": {
+        "summary": "Sign up",
+        "description": "Create a new user account",
+        "tags": ["user"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "firstname": { "type": "string" },
+                  "lastname": { "type": "string" },
+                  "role": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "address": { "type": "string" }
+                },
+                "required": ["username", "firstname", "lastname", "role", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User signed in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "user": { "$ref": "#/components/schemas/auth" },
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error occurred during sign in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Log in",
+        "description": "Log in with existing user credentials",
+        "tags": ["user"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "user": { "$ref": "#/components/schemas/auth" },
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error occurred during log in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "Log out",
+        "description": "Log out the current user",
+        "tags": ["user"],
+        "responses": {
+          "200": {
+            "description": "User logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No cookies found for logout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/view": {
+      "get": {
+        "summary": "View all categories",
+        "tags": ["category"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "category_id": { "type": "string" },
+                          "category_name": { "type": "string" },
+                          "category_picture": { "type": "string" },
+                          "category_icon": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/add": {
+      "post": {
+        "summary": "Add a new category",
+        "tags": ["category"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "category_name": { "type": "string" },
+                  "category_picture": { "type": "string" },
+                  "category_icon": { "type": "string" }
+                },
+                "required": ["category_name", "category_picture"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/update/{category_id}": {
+      "patch": {
+        "summary": "Update a category",
+        "tags": ["category"],
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "description": "ID of the category to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "category_name": { "type": "string" },
+                  "category_picture": { "type": "string" },
+                  "category_icon": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/delete/{category_id}": {
+      "delete": {
+        "summary": "Delete a category",
+        "tags": ["category"],
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "description": "ID of the category to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viewCustomer": {
+      "get": {
+        "summary": "Get appointments for a specific customer",
+        "tags": ["appointment"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "appointment_id": { "type": "number" },
+                          "description": { "type": "string" },
+                          "date": { "type": "string", "format": "date" },
+                          "time": { "type": "string" },
+                          "service": {
+                            "type": "object",
+                            "properties": {
+                              "service_id": { "type": "number" },
+                              "title": { "type": "string" },
+                              "description": { "type": "string" },
+                              "status": { "type": "string" }
+                            }
+                          },
+                          "professional": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" },
+                              "role": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viewProfessional": {
+      "get": {
+        "summary": "Get appointments for a specific professional",
+        "tags": ["appointment"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "appointment_id": { "type": "number" },
+                          "description": { "type": "string" },
+                          "date": { "type": "string", "format": "date" },
+                          "time": { "type": "string" },
+                          "service": {
+                            "type": "object",
+                            "properties": {
+                              "service_id": { "type": "number" },
+                              "title": { "type": "string" },
+                              "description": { "type": "string" },
+                              "status": { "type": "string" }
+                            }
+                          },
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" },
+                              "role": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointment/update/{appointment_id}": {
+      "patch": {
+        "summary": "Update an appointment",
+        "tags": ["appointment"],
+        "security": [{"BearerAuth": []}],
+        "parameters": [
+          {
+            "name": "appointment_id",
+            "in": "path",
+            "description": "ID of the appointment to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_status": { "type": "string" },
+                  "date": { "type": "string" },
+                  "time": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointment/create": {
+      "post": {
+        "summary": "Create a new appointment",
+        "tags": ["appointment"],
+        "security": [{"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": { "type": "string" },
+                  "service_id": { "type": "number" },
+                  "p_id": { "type": "number" }
+                },
+                "required": ["description", "service_id", "p_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favorite/view": {
+      "get": {
+        "summary": "Get all favorite services for the current user",
+        "tags": ["favorite"],
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "A list of favorite services",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "resultCount": {"type": "integer", "example": 2},
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "favorite_id": {"type": "integer", "example": 1},
+                          "service": {
+                            "type": "object",
+                            "properties": {
+                              "service_id": {"type": "integer", "example": 123},
+                              "title": {"type": "string", "example": "Service Title"},
+                              "description": {"type": "string", "example": "Service Description"},
+                              "status": {"type": "string", "example": "active"}
+                            }
+                          },
+                          "professional": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": {"type": "string", "example": "abc123"},
+                              "username": {"type": "string", "example": "professional_username"},
+                              "firstname": {"type": "string", "example": "Professional Firstname"},
+                              "lastname": {"type": "string", "example": "Professional Lastname"},
+                              "email": {"type": "string", "example": "professional@example.com"},
+                              "role": {"type": "string", "example": "professional"}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Internal server error message"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favorite/add": {
+      "post": {
+        "summary": "Add a service to favorites",
+        "tags": ["favorite"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "service_id": {"type": "integer"}
+                },
+                "required": ["service_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Service added to favorites successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "msg": {"type": "string", "example": "service added to favorites successfully"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Favorite not added"}
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Internal server error message"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favorite/delete/{favorite_id}": {
+      "delete": {
+        "summary": "Delete a favorite post",
+        "tags": ["favorite"],
+        "security": [{"BearerAuth": []}],
+        "parameters": [
+          {
+            "name": "favorite_id",
+            "in": "path",
+            "description": "ID of the favorite post to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conversation": {
+      "get": {
+        "summary": "Get user conversations",
+        "tags": ["conversation"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "conversation_id": { "type": "number" },
+                          "user1_id": { "type": "number" },
+                          "user2_id": { "type": "number" },
+                          "last_message": { "type": "string" },
+                          "timestamp": { "type": "string" },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/message": {
+      "get": {
+        "summary": "Get messages in a conversation",
+        "tags": ["message"],
+        "security": [{"BearerAuth": []}],
+        "parameters": [
+          {
+            "name": "otheruser",
+            "in": "query",
+            "description": "ID of the other user in the conversation",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message_id": { "type": "number" },
+                          "content": { "type": "string" },
+                          "sender_id": { "type": "number" },
+                          "receiver_id": { "type": "number" },
+                          "conversation_id": { "type": "number" },
+                          "created_at": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Conversation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Send a message",
+        "tags": ["message"],
+        "security": [{"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "recipient_id": { "type": "number" },
+                  "content": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "sender_id": { "type": "number" },
+                        "receipent_id": { "type": "number" },
+                        "content": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/view": {
+      "get": {
+        "summary": "Get appointments for a specific user",
+        "tags": ["historique"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "appointment_id": { "type": "number" },
+                          "description": { "type": "string" },
+                          "service_id": { "type": "number" },
+                          "customer": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" },
+                              "username": { "type": "string" }
+                            }
+                          },
+                          "professional": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" },
+                              "username": { "type": "string" }
+                            }
+                          },
+                          "status": { "type": "string" },
+                          "date": { "type": "string", "format": "date" },
+                          "time": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+ 
+    "notification/view": {
+      "get": {
+        "summary": "Get notifications for the current user",
+        "tags": ["notification"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "notification_id": { "type": "number" },
+                          "content": { "type": "string" },
+                          "user_id": { "type": "number" },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "number" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "email": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notification/add": {
+      "post": {
+        "summary": "Create a new notification",
+        "tags": ["notification"],
+        "security": [{"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": { "type": "string" },
+                  "receive_user_id": { "type": "number" }
+                },
+                "required": ["content", "receive_user_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notification/delete/{notification_id}": {
+      "delete": {
+        "summary": "Delete a notification",
+        "tags": ["notification"],
+        "security": [{"BearerAuth": []}],
+        "parameters": [
+          {
+            "name": "notification_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Search for users, services, and posts",
+        "tags": ["Search"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "The search text"
+                  }
+                },
+                "required": ["text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artisans": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": {"type": "string"},
+                              "role": {"type": "string"},
+                              "username": {"type": "string"},
+                              "firstname": {"type": "string"},
+                              "lastname": {"type": "string"},
+                              "email": {"type": "string"},
+                              "address": {"type": "string"},
+                              "phone_number": {"type": "string"},
+                              "instagram_link": {"type": "string"},
+                              "facebook_link": {"type": "string"},
+                              "tiktok_link": {"type": "string"},
+                              "profile_picture": {"type": "string"}
+                            }
+                          }
+                        },
+                        "clients": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": {"type": "string"},
+                              "role": {"type": "string"},
+                              "username": {"type": "string"},
+                              "firstname": {"type": "string"},
+                              "lastname": {"type": "string"},
+                              "email": {"type": "string"},
+                              "address": {"type": "string"},
+                              "phone_number": {"type": "string"},
+                              "instagram_link": {"type": "string"},
+                              "facebook_link": {"type": "string"},
+                              "tiktok_link": {"type": "string"},
+                              "profile_picture": {"type": "string"},
+                              "disponible": {"type": "string"}
+                            }
+                          }
+                        },
+                        "services": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "service_id": {"type": "integer"},
+                              "title": {"type": "string"},
+                              "description": {"type": "string"},
+                              "status": {"type": "string"},
+                              "created_at": {"type": "string", "format": "date-time"},
+                              "subcategory_id": {"type": "string"},
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "user_id": {"type": "string"},
+                                  "username": {"type": "string"},
+                                  "firstname": {"type": "string"},
+                                  "lastname": {"type": "string"},
+                                  "adress": {"type": "string"},
+                                  "phone_number": {"type": "string"},
+                                  "instagram_link": {"type": "string"},
+                                  "facebook_link": {"type": "string"},
+                                  "tiktok_link": {"type": "string"},
+                                  "profile_picture": {"type": "string"}
+                                }
+                              },
+                              "pictures": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "picture_id": {"type": "integer"},
+                                    "link": {"type": "string"}
+                                  }
+                                }
+                              },
+                              "prices": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "price_id": {"type": "integer"},
+                                    "value": {"type": "number"},
+                                    "description": {"type": "string"},
+                                    "rate": {"type": "string"}
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "posts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "post_id": {"type": "integer"},
+                              "title": {"type": "string"},
+                              "created_at": {"type": "string", "format": "date-time"},
+                              "description": {"type": "string"},
+                              "status": {"type": "string"},
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "user_id": {"type": "string"},
+                                  "role": {"type": "string"},
+                                  "username": {"type": "string"},
+                                  "firstname": {"type": "string"},
+                                  "lastname": {"type": "string"},
+                                  "email": {"type": "string"},
+                                  "adress": {"type": "string"},
+                                  "phone_number": {"type": "string"},
+                                  "instagram_link": {"type": "string"},
+                                  "facebook_link": {"type": "string"},
+                                  "tiktok_link": {"type": "string"},
+                                  "profile_picture": {"type": "string"},
+                                  "post_id": {"type": "string"},
+                                  "title":{"type": "string"},
+                                  "post_created_at":{"type": "string"}, 
+                                  "description":{"type": "string"},
+                                  "status":{"type": "string"}
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "An error occurred"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+   },
+    "/picture/add": {
+      "post": {
+        "summary": "Add a picture",
+        "description": "Add a picture for a service",
+        "tags": ["picture"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "link": { "type": "string" },
+                  "service_id": { "type": "number" }
+                },
+                "required": ["link", "service_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Picture added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string", "default": "Picture added successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/picture/delete/{picture_id}": {
+      "delete": {
+        "summary": "Delete a picture",
+        "description": "Delete a picture for a service",
+        "tags": ["picture"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "picture_id": { "type": "string" }
+                },
+                "required": ["picture_id"]
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Picture deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": { "type": "boolean", "default": true },
+                      "msg": { "type": "string", "default": "Picture deleted successfully" }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": { "type": "boolean", "default": false },
+                      "msg": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/picture/view": {
+      "get": {
+        "summary": "View pictures by service ID",
+        "tags": ["picture"],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "query",
+            "description": "ID of the service",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "picture_id": { "type": "string" },
+                          "link": { "type": "string" },
+                          "service_id": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/viewAll": {
+      "get": {
+        "summary": "View all posts",
+        "tags": ["post"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": { "type": "string" },
+                          "username": { "type": "string" },
+                          "firstname": { "type": "string" },
+                          "lastname": { "type": "string" },
+                          "adress": { "type": "string" },
+                          "phone_number": { "type": "string" },
+                          "profile_picture": { "type": "string" },
+                          "post_id": { "type": "string" },
+                          "title": { "type": "string" },
+                          "post_created_at": { "type": "string" },
+                          "description": { "type": "string" },
+                          "status": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/add": {
+      "post": {
+        "summary": "Add a new post",
+        "tags": ["post"],
+        "security": [{"jwt": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" }
+                },
+                "required": ["title", "description"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/update/{post_id}": {
+      "patch": {
+        "summary": "Update a post",
+        "tags": ["post"],
+        "security": [{"jwt": []}],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "_status": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/delete/{post_id}": {
+      "delete": {
+        "summary": "Delete a post",
+        "tags": ["post"],
+        "security": [{"jwt": []}],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "ID of the post",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/post/viewMyPost": {
+      "get": {
+        "summary": "View user's own posts",
+        "tags": ["post"],
+        "security": [{"jwt": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "post_id": { "type": "string" },
+                          "title": { "type": "string" },
+                          "description": { "type": "string" },
+                          "user_id": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/price/add": {
+      "post": {
+        "summary": "Add a new price",
+        "tags": ["price"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "value": { "type": "number" },
+                  "description": { "type": "string" },
+                  "rate": { "type": "string" },
+                  "service_id": { "type": "number" }
+                },
+                "required": ["value", "description", "rate", "service_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Price added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string", "default": "Price added successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/price/update/{price_id}": {
+      "patch": {
+        "summary": "Update a price",
+        "tags": ["price"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "price_id": { "type": "number" },
+                  "value": { "type": "number" },
+                  "description": { "type": "string" },
+                  "rate": { "type": "string" }
+                },
+                "required": ["price_id"]
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Price updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": { "type": "boolean", "default": true },
+                      "msg": { "type": "string", "default": "Price updated successfully" }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": { "type": "boolean", "default": false },
+                      "msg": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/price/delete/{price_id}": {
+      "delete": {
+        "summary": "Delete a price",
+        "tags": ["price"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "price_id": { "type": "string" }
+                },
+                "required": ["price_id"]
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Price deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": { "type": "boolean", "default": true },
+                      "msg": { "type": "string", "default": "Price deleted successfully" }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": { "type": "boolean", "default": false },
+                      "msg": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report/view": {
+      "get": {
+        "summary": "View all reports",
+        "tags": ["report"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "reportID": { "type": "string" },
+                          "description": { "type": "string" },
+                          "user_id": { "type": "string" },
+                          "reported_id": { "type": "string" },
+                          "created_at": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report/delete/{reportID}": {
+      "delete": {
+        "summary": "Delete a report",
+        "tags": ["report"],
+        "parameters": [
+          {
+            "name": "reportID",
+            "in": "path",
+            "description": "ID of the report",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report/create": {
+      "post": {
+        "summary": "Create a new report",
+        "tags": ["report"],
+        "security": [{"jwt": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reported_id": { "type": "string" },
+                  "description": { "type": "string" }
+                },
+                "required": ["reported_id", "description"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/review/view": {
+      "get": {
+        "summary": "View all reviews for a service",
+        "tags": ["review"],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "query",
+            "description": "ID of the service",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": {"type": "string" },
+                          "created_at": {"type": "string"},
+                          "comment": { "type": "string" },
+                          "rating": { "type": "number" },
+                          "service_id": { "type": "number" },
+                          "review_id": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/review/add": {
+      "post": {
+        "summary": "Add a new review",
+        "tags": ["review"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": { "type": "string" },
+                  "rating": { "type": "number" },
+                  "service_id": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/review/update/{review_id}": {
+      "patch": {
+        "summary": "Update an existing review",
+        "tags": ["review"],
+        "parameters": [
+          {
+            "name": "review_id",
+            "in": "path",
+            "description": "ID of the review",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": { "type": "string" },
+                  "rating": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/review/delete/{review_id}": {
+      "patch": {
+        "summary": "Delete a review",
+        "tags": ["review"],
+        "parameters": [
+          {
+            "name": "review_id",
+            "in": "path",
+            "description": "ID of the review",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/viewAll": {
+      "get": {
+        "summary": "View all services",
+        "tags": ["service"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "service_id": { "type": "number" },
+                          "title": { "type": "string" },
+                          "description": { "type": "string" },
+                          "status": { "type": "string", "enum": ["active", "inactive"] },
+                          "created_at": { "type": "string", "format": "date-time" },
+                          "user_id": { "type": "string" },
+                          "subcategory_id": { "type": "number" },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "string" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "adress": { "type": "string" },
+                              "phone_number": { "type": "string" },
+                              "instagram_link": { "type": "string" },
+                              "facebook_link": { "type": "string" },
+                              "tiktok_link": { "type": "string" },
+                              "profile_picture": { "type": "string" }
+                            }
+                          },
+                          "pictures": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "picture_id": { "type": "number" },
+                                "link": { "type": "string" }
+                              }
+                            }
+                          },
+                          "prices": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "price_id": { "type": "number" },
+                                "value": { "type": "number" },
+                                "description": { "type": "string" },
+                                "rate": { "type": "string" }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/viewMyServices": {
+      "get": {
+        "summary": "View all services of the authenticated user",
+        "tags": ["service"],
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "service_id": { "type": "number" },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "user_id": { "type": "string" },
+                              "username": { "type": "string" },
+                              "firstname": { "type": "string" },
+                              "lastname": { "type": "string" },
+                              "adress": { "type": "string" },
+                              "phone_number": { "type": "string" },
+                              "instagram_link": { "type": "string" },
+                              "facebook_link": { "type": "string" },
+                              "tiktok_link": { "type": "string" },
+                              "profile_picture": { "type": "string" }
+                            }
+                          },
+                          "pictures": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "picture_id": { "type": "number" },
+                                "link": { "type": "string" }
+                              }
+                            }
+                          },
+                          "prices": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "price_id": { "type": "number" },
+                                "value": { "type": "number" },
+                                "description": { "type": "string" },
+                                "rate": { "type": "string" }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/delete/{service_id}": {
+      "delete": {
+        "summary": "Delete a service",
+        "tags": ["service"],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "description": "ID of the service to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string", "default": "Service deleted successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/getoneservice/{service_id}": {
+      "get": {
+        "summary": "View details of a single service",
+        "tags": ["service"],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "description": "ID of the service",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "service_id": { "type": "number" },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "user_id": { "type": "string" },
+                            "username": { "type": "string" },
+                            "firstname": { "type": "string" },
+                            "lastname": { "type": "string" },
+                            "adress": { "type": "string" },
+                            "phone_number": { "type": "string" },
+                            "instagram_link": { "type": "string" },
+                            "facebook_link": { "type": "string" },
+                            "tiktok_link": { "type": "string" },
+                            "profile_picture": { "type": "string" }
+                          }
+                        },
+                        "pictures": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "picture_id": { "type": "number" },
+                              "link": { "type": "string" }
+                            }
+                          }
+                        },
+                        "prices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "price_id": { "type": "number" },
+                              "value": { "type": "number" },
+                              "description": { "type": "string" },
+                              "rate": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/create": {
+      "post": {
+        "summary": "Create a new service",
+        "tags": ["service"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "subCategory_id": { "type": "number" },
+                  "pictures": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "link": { "type": "string" }
+                      },
+                      "required": ["link"]
+                    }
+                  },
+                  "prices": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": { "type": "number" },
+                        "description": { "type": "string" },
+                        "rate": { "type": "string" }
+                      },
+                      "required": ["value", "description", "rate"]
+                    }
+                  }
+                },
+                "required": ["title", "description", "subCategory_id", "pictures", "prices"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/service/update/{service_id}": {
+      "patch": {
+        "summary": "Update a service",
+        "tags": ["service"],
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "description": "ID of the service to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "_status": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subCategory/view": {
+      "get": {
+        "summary": "View all sub-categories",
+        "tags": ["subCategory"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "subCategory_name": { "type": "string" },
+                          "category_id": { "type": "number" },
+                          "subCategory_picture": { "type": "string" },
+                          "subCategory_id": { "type": "number" },
+                          "category_name": { "type": "string" },
+                          "category_picture": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subCategory/add": {
+      "post": {
+        "summary": "Add a new sub-category",
+        "security": [{ "bearerAuth": [] }],
+        "tags": ["subCategory"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subCategory_name": { "type": "string" },
+                  "category_id": { "type": "number" },
+                  "subCategory_picture": { "type": "string" }
+                },
+                "required": ["subCategory_name", "category_id", "subCategory_picture"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string", "default": "subCategory added successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subCategory/update/{subCategory_id}": {
+      "patch": {
+        "summary": "Update a sub-category",
+        "security": [{ "bearerAuth": [] }],
+        "tags": ["subCategory"],
+        "parameters": [{
+          "name": "subCategory_id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "number" }
+        }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "subCategory_name": { "type": "string" },
+                  "category_id": { "type": "number" },
+                  "subCategory_picture": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string", "default": "Sub-category updated successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subCategory/delete/{subCategory_id}": {
+      "delete": {
+        "summary": "Delete a sub-category",
+        "security": [{ "bearerAuth": [] }],
+        "tags": ["subCategory"],
+        "parameters": [{
+          "name": "subCategory_id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "number" }
+        }],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string", "default": "Sub-category deleted successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usageConditions/add": {
+      "post": {
+        "summary": "Add usage conditions",
+        "tags": ["usageconditions"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": { "type": "string" }
+                },
+                "required": ["content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usageConditions/delete/{documentID}": {
+      "delete": {
+        "summary": "Delete usage conditions",
+        "tags": ["usageconditions"],
+        "parameters": [
+          {
+            "name": "documentID",
+            "in": "path",
+            "description": "ID of the document containing the usage conditions",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usageConditions/view": {
+      "get": {
+        "summary": "View all usage conditions",
+        "tags": ["usageconditions"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "content": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/viewAllprofessional": {
+      "get": {
+        "summary": "View all professional users",
+        "tags": ["user"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": { "type": "string" },
+                          "lastname": { "type": "string" },
+                          "phone_number": { "type": "string" },
+                          "adress": { "type": "string" },
+                          "category_id": { "type": "number" },
+                          "category_name": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getUser": {
+      "get": {
+        "summary": "Get user information",
+        "tags": ["user"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user_id": { "type": "number" },
+                        "firstname": { "type": "string" },
+                        "lastname": { "type": "string" },
+                        "email": { "type": "string" },
+                        "role": { "type": "string" },
+                        "category_id": { "type": "number" },
+                        "adress": { "type": "string" },
+                        "phone_number": { "type": "string" },
+                        "instagram_link": { "type": "string" },
+                        "tiktok_link": { "type": "string" },
+                        "facebook_link": { "type": "string" },
+                        "profile_picture": { "type": "string" },
+                        "cv": { "type": "string" },
+                        "disponible": { "type": "boolean" },
+                        "verifier": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/viewAll": {
+      "get": {
+        "summary": "View all users",
+        "tags": ["user"],
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "resultCount": { "type": "number" },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user_id": { "type": "number" },
+                          "username": { "type": "string" },
+                          "firstname": { "type": "string" },
+                          "lastname": { "type": "string" },
+                          "email": { "type": "string" },
+                          "role": { "type": "string" },
+                          "created_at": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/update": {
+      "patch": {
+        "summary": "Update user profile",
+        "tags": ["user"],
+        "security": [{"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstname": { "type": "string" },
+                  "lastname": { "type": "string" },
+                  "adress": { "type": "string" },
+                  "phone_number": { "type": "string" },
+                  "instagram_link": { "type": "string" },
+                  "tiktok_link": { "type": "string" },
+                  "facebook_link": { "type": "string" },
+                  "profile_picture": { "type": "string" },
+                  "disponible": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateUserCategory": {
+      "patch": {
+        "summary": "Update user category and CV",
+        "tags": ["user"],
+        "security": [{"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "category_id": { "type": "number" },
+                  "cv": { "type": "string" }
+                },
+                "required": ["category_id", "cv"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string", "default": "updating successfully" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string", "default": "Unauthorized" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/delete/{user_id}": {
+      "delete": {
+        "summary": "Delete a user",
+        "tags": ["user"],
+        "security": [{"BearerAuth": []}],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/accept/{user_id}": {
+      "patch": {
+        "summary": "Accept professional registration (Admin only)",
+        "tags": ["admin"],
+        "security": [{"BearerAuth": []}, {"AdminAuth": []}],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": true },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "default": false },
+                    "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "auth": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "username": { "type": "string" },
+          "firstname": { "type": "string" },
+          "lastname": { "type": "string" },
+          "role": { "type": "string" },
+          "email": { "type": "string" },
+          "address": { "type": "string" }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "category_id": { "type": "integer" },
+          "category_name": { "type": "string" },
+          "category_picture": { "type": "string" }
+        }
+      },
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "appointment_id": { "type": "integer" },
+          "description": { "type": "string" },
+          "service_id": { "type": "number" },
+          "p_id": { "type": "number" },
+          "_status": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string", "format": "time" }
+        }
+      },
+      "Favorite": {
+        "type": "object",
+        "properties": {
+          "favorite_id": { "type": "integer" },
+          "post_id": { "type": "number" },
+          "user_id": { "type": "number" }
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "notification_id": { "type": "integer" },
+          "content": { "type": "string" },
+          "user_id": { "type": "integer" },
+          "receive_user_id": { "type": "integer" }
+        }
+    },
+    "picture": {
+      "type": "object",
+      "properties": {
+        "picture_id": { "type": "integer" },
+        "link": { "type": "string" },
+        "service_id": { "type": "integer" }
+      }
+  },
+  "post": {
+    "type": "object",
+    "properties": {
+      "user_id": { "type": "integer" },
+      "username": { "type": "string" },
+      "firstname": { "type": "string" },
+      "lastname": { "type": "string" },
+      "adress": { "type": "string" },
+      "phone_number": { "type": "string" },
+      "profile_picture": { "type": "string" },
+      "post_id": { "type": "integer" },
+      "title": { "type": "string" },
+      "post_created_at": { "type": "string" },
+      "description": { "type": "string" },
+      "status": { "type": "string" }
+    }
+ },
+ "price": {
+  "type": "object",
+  "properties": {
+    "price_id": { "type": "number" },
+    "value": { "type": "number" },
+    "description": { "type": "string" },
+    "rate": { "type": "string" },
+    "service_id": { "type": "number" }
+  },
+  "required": ["price_id", "value", "description", "rate", "service_id"]
+  },
+  "Report": {
+    "type": "object",
+    "properties": {
+      "reportID": { "type": "number" },
+      "description": { "type": "string" },
+      "user_id": { "type": "number" },
+      "reported_id": { "type": "string" },
+      "created_at": { "type": "string", "format": "date-time" }
+    },
+    "required": ["reportID", "description", "user_id", "reported_id", "created_at"]
+  },
+  "ReportInput": {
+    "type": "object",
+    "properties": {
+      "reported_id": { "type": "string" },
+      "description": { "type": "string" }
+    },
+    "required": ["reported_id", "description"]
+  },
+  "Review": {
+    "type": "object",
+    "properties": {
+      "review_id": { "type": "number" },
+      "comment": { "type": "string" },
+      "rating": { "type": "number" },
+      "service_id": { "type": "number" },
+      "created_at": { "type": "string", "format": "date-time" }
+    },
+    "required": ["review_id", "comment", "rating", "service_id", "created_at"]
+  },
+  "ReviewInput": {
+    "type": "object",
+    "properties": {
+      "comment": { "type": "string" },
+      "rating": { "type": "number" },
+      "service_id": { "type": "number" }
+    },
+    "required": ["comment", "rating", "service_id"]
+  },
+  "Service": {
+    "type": "object",
+    "properties": {
+      "service_id": { "type": "number" },
+      "user": {
+        "type": "object",
+        "properties": {
+          "user_id": { "type": "number" },
+          "username": { "type": "string" },
+          "firstname": { "type": "string" },
+          "lastname": { "type": "string" },
+          "address": { "type": "string" },
+          "phone_number": { "type": "string" },
+          "instagram_link": { "type": "string" },
+          "facebook_link": { "type": "string" },
+          "tiktok_link": { "type": "string" },
+          "profile_picture": { "type": "string" }
+        }
+      },
+      "pictures": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "picture_id": { "type": "number" },
+            "link": { "type": "string" }
+          }
+        }
+      },
+      "prices": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "price_id": { "type": "number" },
+            "value": { "type": "number" },
+            "description": { "type": "string" },
+            "rate": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "ServiceUpdateInput": {
+    "type": "object",
+    "properties": {
+      "title": { "type": "string" },
+      "description": { "type": "string" },
+      "_status": { "type": "string" }
+    }
+  },
+  "ServiceCreateInput": {
+    "type": "object",
+    "properties": {
+      "title": { "type": "string" },
+      "description": { "type": "string" },
+      "subCategory_id": { "type": "number" },
+      "pictures": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Picture"
+        }
+      },
+      "prices": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Price"
+        }
+      }
+    },
+    "required": ["title", "description", "subCategory_id"]
+  },
+  "Price": {
+    "type": "object",
+    "properties": {
+      "value": { "type": "number" },
+      "description": { "type": "string" },
+      "rate": { "type": "string" }
+    },
+    "required": ["value", "description", "rate"]
+  },
+  "Picture": {
+    "type": "object",
+    "properties": {
+      "link": { "type": "string" }
+    },
+    "required": ["link"]
+  },
+  "SubCategory": {
+    "type": "object",
+    "properties": {
+      "subCategory_name": { "type": "string" },
+      "category_id": { "type": "number" },
+      "subCategory_picture": { "type": "string" },
+      "subCategory_id": { "type": "number" },
+      "category_name": { "type": "string" },
+      "category_picture": { "type": "string" }
+    }
+  },
+  "SubCategoryInput": {
+    "type": "object",
+    "properties": {
+      "subCategory_name": { "type": "string" },
+      "category_id": { "type": "number" },
+      "subCategory_picture": { "type": "string" }
+    },
+    "required": ["subCategory_name", "category_id", "subCategory_picture"]
+  },
+  "UsageCondition": {
+    "type": "object",
+    "properties": {
+      "documentID": { "type": "number" },
+      "content": { "type": "string" }
+    }
+  },
+  "UsageConditionInput": {
+    "type": "object",
+    "properties": {
+      "content": { "type": "string" }
+    },
+    "required": ["content"]
+  },
+  "User": {
+    "type": "object",
+    "properties": {
+      "user_id": { "type": "number" },
+      "firstname": { "type": "string" },
+      "lastname": { "type": "string" },
+      "email": { "type": "string" },
+      "adress": { "type": "string" },
+      "phone_number": { "type": "string" },
+      "instagram_link": { "type": "string" },
+      "tiktok_link": { "type": "string" },
+      "facebook_link": { "type": "string" },
+      "profile_picture": { "type": "string" },
+      "created_at": { "type": "string" }
+    }
+  },
+  "Professional": {
+    "type": "object",
+    "properties": {
+      "lastname": { "type": "string" },
+      "username": { "type": "string" },
+      "phone_number": { "type": "string" },
+      "adress": { "type": "string" },
+      "category_id": { "type": "number" },
+      "category_name": { "type": "string" }
+    } 
+}
+}
+}
+}
+}
