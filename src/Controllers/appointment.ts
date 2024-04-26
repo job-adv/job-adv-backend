@@ -20,11 +20,14 @@ export default class AppointmentController {
             throw new Error("Appointment not created");
         }
 
-
-
+        let text = (user.firstname == undefined || user.lastname == undefined)? ` Un client veux prendre un rendez-vous, consulter votre file d'attente.`: `Le client ${user.firstname} ${user.lastname } veux prendre un rendez-vous, consulter votre file d'attente.`;
         qr = "INSERT INTO Notification(`content`, `user_id`, `receive_user_id`) VALUES (?, ?, ?)";
-        let [addNotification] = await conn.query<ResultSetHeader>(qr, [`Le client ${user.firstname} ${user.lastname } veux prendre un rendez-vous, consulter votre file d'attente.`, user.user_id, p_id]);
-
+        let [addNotification] = await conn.query<ResultSetHeader>(qr, [text, user.user_id, p_id]);
+        
+       
+        console.log(text)
+        console.log(user.firstname);
+        console.log(user.lastname);
         return res.status(http_status_code.ok).json({
             success: true,
             msg: "Appointment created successfully"
