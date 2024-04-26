@@ -7,6 +7,6 @@ const router = Router();
 
 
 
-router.route('/view').get([verify], historique.View);
+router.route('/view').post([verify], historique.View);
 
 export default router;
