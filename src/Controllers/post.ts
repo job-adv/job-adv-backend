@@ -17,29 +17,32 @@ export default class special_Request {
           let [rows] = await conn.query<RowDataPacket[]>(qr);
           conn.release(); 
   
-          const clientPosts = rows.filter((row) => row.adress === adress);
+          if(user){
+            const clientPosts = rows.filter((row) => row.adress === adress);
   
           
-          clientPosts.sort((a: any, b: any) => new Date(b.post_created_at).getTime() - new Date(a.post_created_at).getTime());
-  
+            clientPosts.sort((a: any, b: any) => new Date(b.post_created_at).getTime() - new Date(a.post_created_at).getTime());
+    
+            
+            const otherPosts = rows.filter((row) => row.adress !== adress);
+    
+            
+            otherPosts.sort((a: any, b: any) => {
+                if (a.adress === b.adress) {
+                    return new Date(b.post_created_at).getTime() - new Date(a.post_created_at).getTime();
+                } else {
+                    return a.adress.localeCompare(b.adress);
+                }
+            });
+    
+           
+            rows = clientPosts.concat(otherPosts);
+          }
           
-          const otherPosts = rows.filter((row) => row.adress !== adress);
-  
-          
-          otherPosts.sort((a: any, b: any) => {
-              if (a.adress === b.adress) {
-                  return new Date(b.post_created_at).getTime() - new Date(a.post_created_at).getTime();
-              } else {
-                  return a.adress.localeCompare(b.adress);
-              }
-          });
-  
-         
-          const sortedRows = clientPosts.concat(otherPosts);
           return res.status(http_status_code.ok).json({
               success: true,
-              resultCount: sortedRows.length,
-              data: sortedRows
+              resultCount: rows.length,
+              data: rows
           });
       } catch (e) {
           return res.status(status).json({
