@@ -3,7 +3,7 @@ import search from "../Controllers/search";
 const router = Router();
 
 
-router.route('/').get(search.search);
+router.route('/').post(search.search);
 
 
 export default router;
