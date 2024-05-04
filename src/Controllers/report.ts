@@ -10,11 +10,24 @@ export default class ReportController {
     try {
       let conn = await connect();
       let qr: string = `
-      SELECT Report.*, Reporter.username AS reporter_username, Reported.username AS reported_username
-      FROM Report
-      INNER JOIN User AS Reporter ON Report.user_id = Reporter.user_id
-      INNER JOIN User AS Reported ON Report.reported_id = Reported.user_id
-      ORDER BY Report.created_at ASC
+      SELECT 
+        Report.*, 
+        Reporter.username AS reporter_username, 
+        Reporter.user_id AS reporter_user_id,
+        Reported.username AS reported_username,
+        Reported.user_id AS reported_user_id
+      FROM 
+        Report
+      INNER JOIN 
+        User AS Reporter 
+      ON 
+        Report.user_id = Reporter.user_id
+      INNER JOIN 
+        User AS Reported 
+      ON 
+        Report.reported_id = Reported.user_id
+      ORDER BY 
+        Report.created_at ASC
     `;
       let [rows] = await conn.query<RowDataPacket[]>(qr);
       conn.release(); // Release the connection back to the pool
