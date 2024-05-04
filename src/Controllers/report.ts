@@ -9,7 +9,12 @@ export default class ReportController {
     let status: number = http_status_code.serverError;
     try {
       let conn = await connect();
-      let qr: string = "SELECT * FROM Report ORDER BY created_at ASC";
+      let qr: string = `
+          SELECT Report.*, User.username AS reporter_username
+          FROM Report
+          INNER JOIN User ON Report.user_id = User.user_id
+          ORDER BY Report.created_at ASC
+    `;
       let [rows] = await conn.query<RowDataPacket[]>(qr);
       conn.release(); // Release the connection back to the pool
 

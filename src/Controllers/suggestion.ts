@@ -12,7 +12,12 @@ export default class Suggestion {
      let status: number = http_status_code.serverError;
      try{
         let conn =  await connect();
-        let qr= "select * from Suggestion ORDER BY date ASC";
+        let qr= `
+            SELECT Suggestion.*, User.username AS suggestor_username
+            FROM Suggestion
+            INNER JOIN User ON Suggestion.user_id = User.user_id
+            ORDER BY Suggestion.date ASC
+      `;
         let [rows] = await conn.query<RowDataPacket[]>(qr);
         conn.release();
         return res.status(http_status_code.ok).json({
