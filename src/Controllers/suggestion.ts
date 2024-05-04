@@ -72,6 +72,7 @@ export default class Suggestion {
        let {description} = req.body as { description: string};
        let user = (req as any).user;
 
+       
        try{
           let conn = await connect();
           let qr: string = "INSERT INTO Suggestion(`description`, `user_id`) VALUES(?, ?)";

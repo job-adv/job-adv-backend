@@ -16,6 +16,7 @@
     { "name": "post", "description": "Operations related to Post management"},
     { "name": "price", "description": "Operations related to Pictures"},
     { "name": "report", "description": "Operations related to Report management"},
+    { "name": "suggestion", "description": "Operations related to suggestion management"},
     { "name": "review", "description": "Operations related to Review management"},
     { "name": "service", "description": "Operations related to service management"},
     { "name": "subCategory", "description": "Operations related to SubCategory management"},
@@ -724,6 +725,179 @@
                   "properties": {
                     "success": { "type": "boolean", "default": false },
                     "msg": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestion/view": {
+      "get": {
+        "summary": "Get all suggestions",
+        "tags": ["suggestion"],
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "A list of suggestions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "resultCount": {"type": "integer", "example": 2},
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "suggestion_id": {"type": "integer", "example": 1},
+                          "description": {"type": "string", "example": "This is a suggestion"},
+                          "date": {"type": "string", "format": "date-time", "example": "2024-05-05T10:00:00Z"},
+                          "suggestor_username": {"type": "string", "example": "suggestor1"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Internal server error message"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestion/add": {
+      "post": {
+        "summary": "Add a suggestion",
+        "tags": ["suggestion"],
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {"type": "string"}
+                },
+                "required": ["description"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Suggestion added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "msg": {"type": "string", "example": "Suggestion added successfully"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Favorite not added"}
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Internal server error message"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suggestion/delete/{suggestionID}": {
+      "patch": {
+        "summary": "Delete a suggestion",
+        "tags": ["suggestion"],
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "suggestionID",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Suggestion deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "msg": {"type": "string", "example": "Suggestion deleted successfully"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Suggestion not deleted"}
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "msg": {"type": "string", "example": "Internal server error message"}
                   }
                 }
               }
