@@ -1,11 +1,13 @@
 import mysql from 'mysql2/promise';
 
-const pool = mysql.createPool({
+/*const pool = mysql.createPool({
   host: 'localhost',
   user: "root",
   database: "hate_info",
- 
-});
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});*/
 
 /*const pool = mysql.createPool({
   host: 'localhost',
@@ -16,7 +18,6 @@ const pool = mysql.createPool({
   connectionLimit: 75,
   queueLimit: 0
 });*/
-/*
 const pool = mysql.createPool({
   host: 'profinder-backend1.a.aivencloud.com',
   user: 'avnadmin',
@@ -28,7 +29,6 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 });
-*/
 
 const getConnection = () => {
   return pool.getConnection();
