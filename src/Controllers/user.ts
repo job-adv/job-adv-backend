@@ -86,7 +86,7 @@ export default class UsereController {
 
   static async updateUser(req: Request, res: Response)
     {
-        let {firstname, lastname, adress, phone_number, instagram_link, tiktok_link, facebook_link, profile_picture, disponible} = req.body as {
+        let {firstname, lastname, adress, phone_number, instagram_link, tiktok_link, facebook_link, profile_picture, disponible, category_id, cv} = req.body as {
             
           firstname: String,
           lastname: string,
@@ -97,7 +97,9 @@ export default class UsereController {
           tiktok_link: string,
           facebook_link: string,
           profile_picture: string,
-          disponible: boolean
+          disponible: boolean,
+          category_id: string,
+          cv: string
         };
 
         let status: number = http_status_code.serverError;
@@ -118,11 +120,13 @@ export default class UsereController {
               tiktok_link: tiktok_link || row[0].tiktok_link,
               facebook_link: facebook_link || row[0].facebook_link,
               profile_picture: profile_picture || row[0].profile_picture,
-              disponible : disponible || row[0].disponible
+              disponible : disponible || row[0].disponible,
+              category_id: category_id || row[0].category_id,
+              cv: cv || row[0].cv
            }
 
-           qr = "UPDATE User set firstname= ?, lastname=?, adress=?, phone_number=?, instagram_link=?, tiktok_link=?, facebook_link=?, profile_picture=?, disponible= ? where user_id= ?";
-           let [updating] = await conn.query<ResultSetHeader>(qr, [profile.firstname, profile.lastname, profile.adress, profile.phone_number, profile.instagram_link, profile.tiktok_link, profile.facebook_link, profile.profile_picture, disponible, user.user_id]);
+           qr = "UPDATE User set firstname= ?, lastname=?, adress=?, phone_number=?, instagram_link=?, tiktok_link=?, facebook_link=?, profile_picture=?, disponible= ?, cv= ?, category_id= ? where user_id= ?";
+           let [updating] = await conn.query<ResultSetHeader>(qr, [profile.firstname, profile.lastname, profile.adress, profile.phone_number, profile.instagram_link, profile.tiktok_link, profile.facebook_link, profile.profile_picture, disponible,cv, category_id, user.user_id]);
            conn.release();
            if(updating.affectedRows == 0)
            {
