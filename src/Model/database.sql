@@ -289,7 +289,7 @@ CREATE TABLE IF NOT EXISTS Report (
     user_id VARCHAR(36),
     reported_id INT,
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (reported_id) REFERENCES Post(post_id) ON DELETE CASCADE
+    FOREIGN KEY (reported_id) REFERENCES Service(service_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Message (

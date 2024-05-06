@@ -11,31 +11,33 @@ export default class ReportController {
       let conn = await connect();
       let qr: string = `
       SELECT 
-        Report.*, 
-        Reporter.username AS reporter_username, 
-        Reporter.user_id AS reporter_user_id,
-        Reported.username AS reported_username,
-        Reported.user_id AS reported_user_id
+      R.reportID,
+      R.description,
+      R.created_at,
+      R.user_id AS reporter_user_id,
+      RU.username AS reporter_username,
+      U.user_id AS reported_user_id,
+      U.username AS reported_username
       FROM 
-        Report
-      INNER JOIN 
-        User AS Reporter 
-      ON 
-        Report.user_id = Reporter.user_id
-      INNER JOIN 
-        User AS Reported 
-      ON 
-        Report.reported_id = Reported.user_id
-      ORDER BY 
-        Report.created_at ASC
-    `;
+          Report R
+      JOIN 
+          User RU ON R.user_id = RU.user_id -- Join to get reporting user's username
+      JOIN 
+          Service S ON R.reported_id = S.service_id -- Join to get the reported user's service
+      JOIN 
+          User U ON S.user_id = U.user_id
+`;
       let [rows] = await conn.query<RowDataPacket[]>(qr);
-      conn.release(); // Release the connection back to the pool
+
+      qr = "select * from Report ORDER BY created_at ASC";
+      let [rows2] = await conn.query<RowDataPacket[]>(qr);
+      conn.release(); 
 
       return res.status(http_status_code.ok).json({
         success: true,
         resultCount: rows.length,
-        data: rows
+        data: rows,
+        data2: rows2
       });
     } catch (e) {
       return res.status(status).json({

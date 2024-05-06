@@ -479,44 +479,57 @@ static async viewAllmyService(req: Request, res: Response) {
 
 
 
-  static async UpdateService(req: Request, res: Response)
-  {
-     let status: number = http_status_code.serverError;
-     let { service_id} = req.params ;
-     let { title, description, _status} = req.body as { title: string , description: string, _status: string };
-           
-     try {
-       let conn = await connect();
-       let qr: string = "select * from Service where service_id= ?";
-       let [row] = await conn.query<RowDataPacket[]>(qr, [service_id]);
+  static async UpdateService(req: Request, res: Response) {
+    let status: number = http_status_code.serverError;
+    let { service_id } = req.params;
+    let { title, description, _status, pictures, prices } = req.body as { title: string, description: string, _status: string, pictures: any[], prices: any[] };
 
-       let service = {
-          title: title || row[0].title,
-          description: description || row[0].description,
-          _status: _status || row[0].status
-       }
+    try {
+        let conn = await connect();
+        let qr: string = "SELECT * FROM Service WHERE service_id = ?";
+        let [row] = await conn.query<RowDataPacket[]>(qr, [service_id]);
 
-       qr = "update Service set title= ?, description= ?, status: ? where service_id = ?";
-       let [updating] = await conn.query<ResultSetHeader>(qr, [service.title, service.description, service._status, service_id]);
-       conn.release();
-       if(updating.affectedRows == 0)
-       {
-          status= http_status_code.bad_request;
-          throw new Error("Upadating error");
-       }
+        let service = {
+            title: title || row[0].title,
+            description: description || row[0].description,
+            _status: _status || row[0].status
+        }
 
-       return res.status(http_status_code.ok).json({
-          success: true,
-          msg: "updating successfully"
-       });
+        
+        qr = "UPDATE Service SET title = ?, description = ?, status = ? WHERE service_id = ?";
+        let [updating] = await conn.query<ResultSetHeader>(qr, [service.title, service.description, service._status, service_id]);
 
-     }
-     catch(e){
-      return res.status(status).json({
-       success: false,
-       msg: e instanceof Error? e.message : e
-     });
+    
+        if (pictures && pictures.length > 0) {
+            qr = "INSERT INTO Picture (service_id, link) VALUES ?";
+            let pictureValues = pictures.map(pic => [service_id, pic.link]);
+            await conn.query<ResultSetHeader>(qr, [pictureValues]);
+        }
+
+        if (prices && prices.length > 0) {
+            qr = "INSERT INTO Price (service_id, value, description, rate) VALUES ?";
+            let priceValues = prices.map(price => [service_id, price.value, price.description, price.rate]);
+            await conn.query<ResultSetHeader>(qr, [priceValues]);
+        }
+
+        conn.release();
+        if (updating.affectedRows == 0) {
+            status = http_status_code.bad_request;
+            throw new Error("Updating error");
+        }
+
+        return res.status(http_status_code.ok).json({
+            success: true,
+            msg: "Updating successfully"
+        });
+
+    } catch (e) {
+        return res.status(status).json({
+            success: false,
+            msg: e instanceof Error ? e.message : e
+        });
     }
+}
 
   
 
@@ -524,7 +537,7 @@ static async viewAllmyService(req: Request, res: Response) {
 
 
 
-  }
+  
 
 
   
