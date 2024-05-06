@@ -98,7 +98,7 @@ export default class UsereController {
           facebook_link: string,
           profile_picture: string,
           disponible: boolean,
-          category_id: string,
+          category_id: number,
           cv: string
         };
 
