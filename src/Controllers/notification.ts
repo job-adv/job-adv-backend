@@ -89,4 +89,42 @@ export default class NotificationController {
       });
     }
   }
+
+
+  static async notifyAllUsers(req: Request, res: Response) {
+    let status: number = http_status_code.serverError;
+    let { content } = req.body as { content: string };
+    let user = (req as any).user;
+
+    try {
+        let conn = await connect();
+        
+        
+        let [users] = await conn.query<RowDataPacket[]>("SELECT user_id FROM Users");
+
+        for (let userRow of users) {
+            let receive_user_id = userRow.user_id;
+            
+            let qr: string = "INSERT INTO Notification(`content`, `user_id`, `receive_user_id`) VALUES (?, ?, ?)";
+            let [created] = await conn.query<ResultSetHeader>(qr, [content, user.user_id, receive_user_id]);
+
+            if (created.affectedRows == 0) {
+                status = http_status_code.bad_request;
+                throw new Error("notification not created error");
+            }
+        }
+
+        conn.release(); 
+
+        return res.status(http_status_code.ok).json({
+            success: true,
+            msg: "notification created successfully"
+        });
+    } catch (e) {
+        return res.status(status).json({
+            success: false,
+            msg: e instanceof Error ? e.message : e
+        });
+    }
+}
 }
