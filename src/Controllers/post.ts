@@ -7,7 +7,7 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 function localCompare(string1: string, string2?: string) {
    if (!string2) {
-       return 1; // Return 1 indicating string1 comes after string2 (assuming non-existent strings come after existing ones)
+       return 1; 
    }
 
    const lowerCaseString1 = string1.toLowerCase();
@@ -26,29 +26,28 @@ export default class special_Request {
    static async view_All_special_Request(req: Request, res: Response) {
        let status: number = http_status_code.serverError;
        let user = (req as any).user;
-       let address = user ? user.address : "";
+       let adress = user ? user.adress : "";
 
        try {
            let conn = await connect();
-           let qr: string = `SELECT Post.user_id, username, firstname, lastname, address, phone_number, profile_picture, post_id, title, Post.created_at AS post_created_at, description, status 
+           let qr: string = `SELECT Post.user_id, username, firstname, lastname, adress, phone_number, profile_picture, post_id, title, Post.created_at AS post_created_at, description, status 
                                FROM User, Post 
                                WHERE User.user_id = Post.user_id`;
            let [rows] = await conn.query<RowDataPacket[]>(qr);
            conn.release();
 
            if (user) {
-               const clientPosts = rows.filter((row) => row.address === address);
+               const clientPosts = rows.filter((row) => row.adress === adress);
 
                clientPosts.sort((a: any, b: any) => new Date(b.post_created_at).getTime() - new Date(a.post_created_at).getTime());
 
-               const otherPosts = rows.filter((row) => row.address !== address);
+               const otherPosts = rows.filter((row) => row.adress !== adress);
 
                otherPosts.sort((a: any, b: any) => {
-                   if (a.address === b.address) {
+                   if (a.adress === b.adress) {
                        return new Date(b.post_created_at).getTime() - new Date(a.post_created_at).getTime();
                    } else {
-                       // Use localCompare function here
-                       return localCompare(a.address, b.address);
+                       return localCompare(a.adress, b.adress);
                    }
                });
 
