@@ -6,13 +6,14 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 
 function localCompare(string1: string, string2?: string) {
-   if (string2 === null || string2 === undefined) {
+   if (string2 == null) {
       return 1; 
+      
   }
 
-
-   const lowerCaseString1 = string1.toLowerCase();
-   const lowerCaseString2 = string2.toLowerCase();
+  
+  const lowerCaseString1 = (string1 || '').toLowerCase();
+  const lowerCaseString2 = string2.toLowerCase();
 
    if (lowerCaseString1 < lowerCaseString2) {
        return -1;
