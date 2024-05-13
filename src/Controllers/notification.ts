@@ -100,7 +100,7 @@ export default class NotificationController {
         let conn = await connect();
         
         
-        let [users] = await conn.query<RowDataPacket[]>("SELECT user_id FROM Users");
+        let [users] = await conn.query<RowDataPacket[]>("SELECT user_id FROM User");
 
         for (let userRow of users) {
             let receive_user_id = userRow.user_id;
