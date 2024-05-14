@@ -18,6 +18,7 @@ import mysql from 'mysql2/promise';
   connectionLimit: 75,
   queueLimit: 0
 });*/
+
 const pool = mysql.createPool({
   host: 'profinder-backend1.a.aivencloud.com',
   user: 'avnadmin',

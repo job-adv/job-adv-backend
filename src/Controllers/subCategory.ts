@@ -72,20 +72,19 @@ export default class SubCategoryController {
  static async deleteSubCategory(req: Request, res: Response)
  {
      let status: number = http_status_code.serverError;
-     let { category_id} = req.body as { category_id: number};
      let {subCategory_id} = req.params;
      try{
          let conn = await connect();
-         let qr: string = "select * from SubCategory where subCategory_id= ? and category_id= ?";
+         let qr: string = "select * from SubCategory where subCategory_id= ? ";
 
-         let [result] = await conn.query<RowDataPacket[]>(qr, [subCategory_id, category_id]);
+         let [result] = await conn.query<RowDataPacket[]>(qr, [subCategory_id]);
          if(result.length == 0){
             status = http_status_code.not_found;
             throw new Error("subCategory not exist");
          }
 
-         qr = "delete from SubCategory where subCategory_id= ? and category_id= ?";
-         let [row] = await conn.query<ResultSetHeader>(qr, [subCategory_id, category_id]);
+         qr = "delete from SubCategory where subCategory_id= ?";
+         let [row] = await conn.query<ResultSetHeader>(qr, [subCategory_id]);
          conn.release();
          if(row.affectedRows == 0)
          {
