@@ -187,7 +187,7 @@ export default class AppointmentController {
           SELECT A.appointment_id, A.description, A.date, A.time, A.status, S.service_id, S.title AS service_title, 
                  S.description AS service_description, S.status AS service_status,
                  C.user_id AS customer_id, C.username AS customer_username, C.firstname AS customer_firstname, 
-                 C.lastname AS customer_lastname, C.email AS customer_email, C.role AS customer_role, C.phone_number AS customer_phone
+                 C.lastname AS customer_lastname, C.email AS customer_email, C.role AS customer_role, C.phone_number AS customer_phone, C.profile_picture AS customer_picture
           FROM Appointment A
           INNER JOIN User C ON A.c_id = C.user_id
           INNER JOIN Service S ON A.service_id = S.service_id
@@ -215,6 +215,7 @@ export default class AppointmentController {
           email: row.customer_email,
           role: row.customer_role,
           phone_number: row.customer_phone,
+          profile_picture: row.customer_picture,
         }
       }));
 
