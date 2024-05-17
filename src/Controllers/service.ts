@@ -195,7 +195,7 @@ export default class ServiceController {
          if (row.picture_id && !pictureExists) {
              result[row.service_id].pictures.push({
                  picture_id: row.picture_id,
-                 link: row.link
+                 link: row.picture_link
              });
          }
      
