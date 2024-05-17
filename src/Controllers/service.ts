@@ -157,6 +157,9 @@ export default class ServiceController {
       const qr: string = "SELECT Service.service_id, Service.title, Service.description, Service.status, Service.created_at, Service.subCategory_id, User.user_id, User.username, User.firstname, User.lastname, User.adress AS address, User.phone_number, User.role, User.instagram_link, User.facebook_link, User.tiktok_link, User.profile_picture, Picture.picture_id, Picture.link AS picture_link, Price.price_id, Price.value, Price.description AS price_description, Price.rate FROM Service JOIN User ON Service.user_id = User.user_id LEFT JOIN Picture ON Service.service_id = Picture.service_id LEFT JOIN Price ON Service.service_id = Price.service_id WHERE Service.subCategory_id = ? AND Service.service_id IS NOT NULL GROUP BY Service.service_id, Picture.picture_id, Price.price_id ORDER BY Service.created_at DESC";
       const [rows] = await conn.query<RowDataPacket[]>(qr, [subCategory_id]);
 
+      conn.release();
+
+
       const result: any = {};
       rows.forEach((row: any) => {
          if (!result[row.service_id]) {
