@@ -147,7 +147,7 @@ export default class ServiceController {
 }
 
 
- /*static async viewAll(req: Request, res: Response) {
+ static async viewAllBySubCat(req: Request, res: Response) {
   let status: number = http_status_code.serverError;
 
   try {
