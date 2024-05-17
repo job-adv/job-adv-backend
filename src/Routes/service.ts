@@ -9,7 +9,7 @@ const router = Router();
 
 
 router.route('/viewAll').get([viewALLservice], service.viewAll);
-router.route('/viewallb').get([viewALLservice], service.viewAllBySubCat);
+router.route('/viewallb/:subCategory_id').get([viewALLservice], service.viewAllBySubCat);
 router.route('/viewMyServices').get([verify], service.viewAllmyService);
 router.route("/update/:service_id").patch(service.UpdateService);
 router.route("/delete/:service_id").delete(service.deleteService);
