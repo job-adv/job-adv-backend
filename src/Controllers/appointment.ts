@@ -128,7 +128,7 @@ export default class AppointmentController {
                  S.description AS service_description, S.status AS service_status,
                  P.user_id AS professional_id, P.username AS professional_username, 
                  P.firstname AS professional_firstname, P.lastname AS professional_lastname, 
-                 P.email AS professional_email, P.role AS professional_role
+                 P.email AS professional_email, P.role AS professional_role, P.profile_picture AS professional_picture
           FROM Appointment A
           INNER JOIN Service S ON A.service_id = S.service_id
           INNER JOIN User P ON S.user_id = P.user_id
@@ -154,7 +154,8 @@ export default class AppointmentController {
           firstname: row.professional_firstname,
           lastname: row.professional_lastname,
           email: row.professional_email,
-          role: row.professional_role
+          role: row.professional_role,
+          profile_picture: row.professional_picture,
         }
       }));
 
