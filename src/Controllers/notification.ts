@@ -15,7 +15,8 @@ export default class NotificationController {
             SELECT n.notification_id, n.content, n.user_id, u.* 
             FROM Notification n
             JOIN User u ON n.receive_user_id = u.user_id
-            WHERE n.receive_user_id = ?`;
+            WHERE n.receive_user_id = ?
+            ORDER BY n.created_at DESC`;
       let [rows] = await conn.query<RowDataPacket[]>(qr, [user.user_id]);
 
       conn.release(); // Release the connection back to the pool
