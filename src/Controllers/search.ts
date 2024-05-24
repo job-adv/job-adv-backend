@@ -7,12 +7,12 @@ export default class Search {
   static async search(req: Request, res: Response) {
     const { text } = req.body;
 
-    // Split the search text into parts
-    const searchParts = text.split(' ').map(part => part.trim()).filter(part => part.length > 0);
+    // Split the search text into parts and add type annotations
+    const searchParts: string[] = text.split(' ').map((part: string) => part.trim()).filter((part: string) => part.length > 0);
 
     // Prepare the query parts for each search term
-    const likeQuery = searchParts.map(part => `%${part}%`);
-    const fullTextQuery = searchParts.join(' ');
+    const likeQuery: string[] = searchParts.map((part: string) => `%${part}%`);
+    const fullTextQuery: string = searchParts.join(' ');
 
     console.log(searchParts);
 
@@ -29,7 +29,7 @@ export default class Search {
             OR MATCH(username, firstname, lastname) AGAINST(? IN BOOLEAN MODE)
           )
       `;
-      let [artisan] = await conn.query<RowDataPacket[]>(qr, [...likeQuery.flatMap(part => [part, part, part, part]), fullTextQuery]);
+      let [artisan] = await conn.query<RowDataPacket[]>(qr, [...likeQuery.flatMap((part: string) => [part, part, part, part]), fullTextQuery]);
 
       qr = `
         SELECT *
@@ -40,7 +40,7 @@ export default class Search {
             OR MATCH(username, firstname, lastname) AGAINST(? IN BOOLEAN MODE)
           )
       `;
-      let [client] = await conn.query<RowDataPacket[]>(qr, [...likeQuery.flatMap(part => [part, part, part, part]), fullTextQuery]);
+      let [client] = await conn.query<RowDataPacket[]>(qr, [...likeQuery.flatMap((part: string) => [part, part, part, part]), fullTextQuery]);
 
       qr = `
         SELECT 
@@ -72,7 +72,7 @@ export default class Search {
         ORDER BY 
           Service.created_at DESC
       `;
-      const [serviceRows] = await conn.query<RowDataPacket[]>(qr, [fullTextQuery, ...likeQuery.flatMap(part => [part, part])]);
+      const [serviceRows] = await conn.query<RowDataPacket[]>(qr, [fullTextQuery, ...likeQuery.flatMap((part: string) => [part, part])]);
 
       const serviceResult: any = {};
       serviceRows.forEach((row: any) => {
@@ -139,7 +139,7 @@ export default class Search {
         ORDER BY 
           Post.created_at DESC
       `;
-      let [post] = await conn.query<RowDataPacket[]>(qr, [fullTextQuery, ...likeQuery.flatMap(part => [part, part])]);
+      let [post] = await conn.query<RowDataPacket[]>(qr, [fullTextQuery, ...likeQuery.flatMap((part: string) => [part, part])]);
 
       let [categories] = await conn.query<ResultSetHeader>("SELECT * FROM Category WHERE MATCH(category_name) AGAINST(? IN BOOLEAN MODE)", [fullTextQuery]);
       let [subCategories] = await conn.query<ResultSetHeader>("SELECT * FROM SubCategory WHERE MATCH(subCategory_name) AGAINST(? IN BOOLEAN MODE)", [fullTextQuery]);
