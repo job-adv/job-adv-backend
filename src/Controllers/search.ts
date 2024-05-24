@@ -25,7 +25,7 @@ export default class Search {
         FROM User
         WHERE role = 'professional'
           AND (
-            ${searchParts.map(() => '(adress LIKE ? OR username LIKE ? OR firstname LIKE ? OR lastname LIKE ?)').join(' AND ')}
+            ${searchParts.map(() => '(adress LIKE ? OR username LIKE ? OR firstname LIKE ? OR lastname LIKE ?)').join(' OR ')}
             OR MATCH(username, firstname, lastname) AGAINST(? IN BOOLEAN MODE)
           )
       `;
@@ -36,7 +36,7 @@ export default class Search {
         FROM User
         WHERE role = 'customer'
           AND (
-            ${searchParts.map(() => '(adress LIKE ? OR username LIKE ? OR firstname LIKE ? OR lastname LIKE ?)').join(' AND ')}
+            ${searchParts.map(() => '(adress LIKE ? OR username LIKE ? OR firstname LIKE ? OR lastname LIKE ?)').join(' OR ')}
             OR MATCH(username, firstname, lastname) AGAINST(? IN BOOLEAN MODE)
           )
       `;
