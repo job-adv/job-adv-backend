@@ -4,21 +4,18 @@ import connect from "../config/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 export default class Search {
-
   static async search(req: Request, res: Response) {
-    let { text, adress } = req.body;
-    let trimmedParts: string[] = ["", ""];
+    const { text } = req.body;
 
-    if (adress !== undefined) {
-      const parts = adress.split(",");
-      trimmedParts = parts.map((part: any) => part.trim());
-      console.log(trimmedParts[0], "         " + trimmedParts[1]);
-    } else {
-      trimmedParts[0] = " ";
-      trimmedParts[1] = " ";
-    }
+    // Split the search text into parts
+    const searchParts = text.split(' ').map(part => part.trim()).filter(part => part.length > 0);
 
-    console.log(text);
+    // Prepare the query parts for each search term
+    const likeQuery = searchParts.map(part => `%${part}%`);
+    const fullTextQuery = searchParts.join(' ');
+
+    console.log(searchParts);
+
     let status: number = http_status_code.serverError;
     try {
       const conn = await connect();
@@ -28,48 +25,22 @@ export default class Search {
         FROM User
         WHERE role = 'professional'
           AND (
-            (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
-            OR (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+            ${searchParts.map(() => '(adress LIKE ? OR username LIKE ? OR firstname LIKE ? OR lastname LIKE ?)').join(' AND ')}
             OR MATCH(username, firstname, lastname) AGAINST(? IN BOOLEAN MODE)
           )
       `;
-      let [artisan] = await conn.query<RowDataPacket[]>(qr, [
-        `%${trimmedParts[0]}%`,
-        `%${trimmedParts[1]}%`,
-        `%${text}%`,
-        `%${text}%`,
-        `%${text}%`,
-        `%${trimmedParts[0]}%`,
-        `%${trimmedParts[1]}%`,
-        `%${text}%`,
-        `%${text}%`,
-        `%${text}%`,
-        text + "*"
-      ]);
+      let [artisan] = await conn.query<RowDataPacket[]>(qr, [...likeQuery.flatMap(part => [part, part, part, part]), fullTextQuery]);
 
       qr = `
         SELECT *
         FROM User
         WHERE role = 'customer'
           AND (
-            (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
-            OR (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+            ${searchParts.map(() => '(adress LIKE ? OR username LIKE ? OR firstname LIKE ? OR lastname LIKE ?)').join(' AND ')}
             OR MATCH(username, firstname, lastname) AGAINST(? IN BOOLEAN MODE)
           )
       `;
-      let [client] = await conn.query<RowDataPacket[]>(qr, [
-        `%${trimmedParts[0]}%`,
-        `%${trimmedParts[1]}%`,
-        `%${text}%`,
-        `%${text}%`,
-        `%${text}%`,
-        `%${trimmedParts[0]}%`,
-        `%${trimmedParts[1]}%`,
-        `%${text}%`,
-        `%${text}%`,
-        `%${text}%`,
-        text + "*"
-      ]);
+      let [client] = await conn.query<RowDataPacket[]>(qr, [...likeQuery.flatMap(part => [part, part, part, part]), fullTextQuery]);
 
       qr = `
         SELECT 
@@ -94,13 +65,14 @@ export default class Search {
           Service.service_id = Price.service_id 
         WHERE 
           (MATCH(Service.title, Service.description) AGAINST(? IN BOOLEAN MODE))
+          OR ${searchParts.map(() => 'Service.title LIKE ? OR Service.description LIKE ?').join(' OR ')}
           AND Service.service_id IS NOT NULL 
         GROUP BY 
           Service.service_id, Picture.picture_id, Price.price_id 
         ORDER BY 
           Service.created_at DESC
       `;
-      const [serviceRows] = await conn.query<RowDataPacket[]>(qr, [text + "*"]);
+      const [serviceRows] = await conn.query<RowDataPacket[]>(qr, [fullTextQuery, ...likeQuery.flatMap(part => [part, part])]);
 
       const serviceResult: any = {};
       serviceRows.forEach((row: any) => {
@@ -162,14 +134,15 @@ export default class Search {
           User, Post 
         WHERE 
           (MATCH(Post.title, Post.description) AGAINST(? IN BOOLEAN MODE))
+          OR ${searchParts.map(() => 'Post.title LIKE ? OR Post.description LIKE ?').join(' OR ')}
           AND User.user_id = Post.user_id 
         ORDER BY 
           Post.created_at DESC
       `;
-      let [post] = await conn.query<RowDataPacket[]>(qr, [text + "*"]);
+      let [post] = await conn.query<RowDataPacket[]>(qr, [fullTextQuery, ...likeQuery.flatMap(part => [part, part])]);
 
-      let [categories] = await conn.query<ResultSetHeader>("SELECT * FROM Category WHERE MATCH(category_name) AGAINST(? IN BOOLEAN MODE)", [text + "*"]);
-      let [subCategories] = await conn.query<ResultSetHeader>("SELECT * FROM SubCategory WHERE MATCH(subCategory_name) AGAINST(? IN BOOLEAN MODE)", [text + "*"]);
+      let [categories] = await conn.query<ResultSetHeader>("SELECT * FROM Category WHERE MATCH(category_name) AGAINST(? IN BOOLEAN MODE)", [fullTextQuery]);
+      let [subCategories] = await conn.query<ResultSetHeader>("SELECT * FROM SubCategory WHERE MATCH(subCategory_name) AGAINST(? IN BOOLEAN MODE)", [fullTextQuery]);
       conn.release();
 
       const data = {
