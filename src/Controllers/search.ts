@@ -4,80 +4,72 @@ import connect from "../config/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 export default class Search {
-   
+
   static async search(req: Request, res: Response) {
     let { text, adress } = req.body;
-    let trimmedParts: string[] = ["", ""]; 
+    let trimmedParts: string[] = ["", ""];
 
     if (adress !== undefined) {
-         const parts = adress.split(","); 
-         trimmedParts = parts.map((part: any) => part.trim()); 
-         console.log(trimmedParts[0], "         " + trimmedParts[1]);
+      const parts = adress.split(",");
+      trimmedParts = parts.map((part: any) => part.trim());
+      console.log(trimmedParts[0], "         " + trimmedParts[1]);
     } else {
-         trimmedParts[0] = " "; 
-         trimmedParts[1] = " "; 
-}
+      trimmedParts[0] = " ";
+      trimmedParts[1] = " ";
+    }
+
     console.log(text);
     let status: number = http_status_code.serverError;
     try {
-      const conn = await connect(); 
+      const conn = await connect();
 
       let qr = `
-      SELECT *
-      FROM User
-      WHERE role = 'professional'
+        SELECT *
+        FROM User
+        WHERE role = 'professional'
           AND (
-              
-              (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
-              OR (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
-              OR username LIKE ?
-              OR firstname LIKE ?
-              OR lastname LIKE ?
-          )
-  `;
-  let [artisan] = await conn.query<RowDataPacket[]>(qr, [
-      `%${trimmedParts[0]}%`,
-      `%${trimmedParts[1]}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${trimmedParts[0]}%`,
-      `%${trimmedParts[1]}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`
-  ]);
-
-      qr = `
-      SELECT *
-      FROM User
-      WHERE role = 'customer'
-          AND (
-              
-              (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
-              OR (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
-              OR username LIKE ?
-              OR firstname LIKE ?
-              OR lastname LIKE ?
+            (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+            OR (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+            OR MATCH(username, firstname, lastname) AGAINST(? IN BOOLEAN MODE)
           )
       `;
-      let [client] = await conn.query<RowDataPacket[]>(qr, [ 
-      `%${trimmedParts[0]}%`,
-      `%${trimmedParts[1]}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${trimmedParts[0]}%`,
-      `%${trimmedParts[1]}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`,
-      `%${text}%`]);
+      let [artisan] = await conn.query<RowDataPacket[]>(qr, [
+        `%${trimmedParts[0]}%`,
+        `%${trimmedParts[1]}%`,
+        `%${text}%`,
+        `%${text}%`,
+        `%${text}%`,
+        `%${trimmedParts[0]}%`,
+        `%${trimmedParts[1]}%`,
+        `%${text}%`,
+        `%${text}%`,
+        `%${text}%`,
+        text + "*"
+      ]);
+
+      qr = `
+        SELECT *
+        FROM User
+        WHERE role = 'customer'
+          AND (
+            (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+            OR (adress LIKE ? AND adress LIKE ? AND (username LIKE ? OR firstname LIKE ? OR lastname LIKE ?))
+            OR MATCH(username, firstname, lastname) AGAINST(? IN BOOLEAN MODE)
+          )
+      `;
+      let [client] = await conn.query<RowDataPacket[]>(qr, [
+        `%${trimmedParts[0]}%`,
+        `%${trimmedParts[1]}%`,
+        `%${text}%`,
+        `%${text}%`,
+        `%${text}%`,
+        `%${trimmedParts[0]}%`,
+        `%${trimmedParts[1]}%`,
+        `%${text}%`,
+        `%${text}%`,
+        `%${text}%`,
+        text + "*"
+      ]);
 
       qr = `
         SELECT 
@@ -101,14 +93,14 @@ export default class Search {
         ON 
           Service.service_id = Price.service_id 
         WHERE 
-          (Service.title LIKE ? OR Service.description LIKE ?) 
+          (MATCH(Service.title, Service.description) AGAINST(? IN BOOLEAN MODE))
           AND Service.service_id IS NOT NULL 
         GROUP BY 
           Service.service_id, Picture.picture_id, Price.price_id 
         ORDER BY 
           Service.created_at DESC
       `;
-      const [serviceRows] = await conn.query<RowDataPacket[]>(qr, [`%${text}%`, `%${text}%`]);
+      const [serviceRows] = await conn.query<RowDataPacket[]>(qr, [text + "*"]);
 
       const serviceResult: any = {};
       serviceRows.forEach((row: any) => {
@@ -169,17 +161,15 @@ export default class Search {
         FROM 
           User, Post 
         WHERE 
-          (Post.title LIKE ? OR Post.description LIKE ?) 
+          (MATCH(Post.title, Post.description) AGAINST(? IN BOOLEAN MODE))
           AND User.user_id = Post.user_id 
         ORDER BY 
           Post.created_at DESC
       `;
-      let [post] = await conn.query<RowDataPacket[]>(qr, [`%${text}%`, `%${text}%`]);
+      let [post] = await conn.query<RowDataPacket[]>(qr, [text + "*"]);
 
-
-
-      let [categories] = await conn.query<ResultSetHeader>("select * from Category where category_name LIKE ?", [`%${text}%`]);
-      let [subCategories] = await conn.query<ResultSetHeader>("select * from SubCategory where subCategory_name LIKE ?", [`%${text}%`]);
+      let [categories] = await conn.query<ResultSetHeader>("SELECT * FROM Category WHERE MATCH(category_name) AGAINST(? IN BOOLEAN MODE)", [text + "*"]);
+      let [subCategories] = await conn.query<ResultSetHeader>("SELECT * FROM SubCategory WHERE MATCH(subCategory_name) AGAINST(? IN BOOLEAN MODE)", [text + "*"]);
       conn.release();
 
       const data = {
